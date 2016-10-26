@@ -7,7 +7,6 @@
 ****************************************************************************/
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 #include "memCmd.h"
 #include "memTest.h"
 #include "cmdParser.h"
@@ -87,7 +86,7 @@ MTNewCmd::exec(const string& option)
   int numObj, sizeArr = 0;
   size_t arrPos;
 
-  // Three valid type: (1) mtn 2 ,(2) mtn 2 -a 3 ,(3) mtn -a 2 3
+  // Three valid type: (1) mtn 2 ,(2) mtn 2 -a 3 ,(3) mtn -a 3 2
   for(size_t i = 0; i < options.size(); ++i){
     if(myStrNCmp("-Array", options[i], 2) == 0){
       arrPos = i;
