@@ -388,7 +388,6 @@ private:
       if(ret){
          #ifdef MEM_DEBUG
          cout << "Recycled from _recycleList[" << n << "]..." << ret << endl;
-         cout << "Memory acquired... " << ret << endl;
          #endif // MEM_DEBUG
          return ret;
       }
@@ -418,7 +417,9 @@ private:
 
          #ifdef MEM_DEBUG
          cout << "New MemBlock... " << _activeBlock << endl;
+         cout << "Memory acquired... " << ret << endl;
          #endif // MEM_DEBUG
+
       } 
       return ret;
    }
