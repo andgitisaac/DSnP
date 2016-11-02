@@ -152,12 +152,9 @@ class MemRecycleList
    // Release the memory occupied by the recycle list(s)
    // DO NOT release the memory occupied by MemMgr/MemBlock
    void reset() {
-      // TODO
-      if(_nextList){
-         _nextList->reset();
-         delete _nextList;
-      }
-      // if(_nextList) delete _nextList;
+      // TODO      
+      if(_nextList) delete _nextList;
+      // destructor of _nextList will call reset() to clear "nextList" of _nextList.
       _first = NULL;
       _nextList = NULL;
    }
@@ -314,7 +311,7 @@ private:
       assert(t >= S);
       // TODO
       // Calculate t is equivalent to the number of array.
-      return (t == toSizeT(S)) ? (0) : ((t - SIZE_T) / S);
+      return ((t - SIZE_T) / S);
    }
    // Go through _recycleList[m], its _nextList, and _nexList->_nextList, etc,
    //    to find a recycle list whose "_arrSize" == "n"
@@ -396,16 +393,14 @@ private:
       if(!(_activeBlock->getMem(t, ret))){
          // not enough, recycle the remained memory and print out
          // Note: rn is the array size
-         if(_activeBlock->getRemainSize() >= toSizeT(S)){
+         if(_activeBlock->getRemainSize() >= S){
             size_t rn = getArraySize(_activeBlock->getRemainSize());
             /* The remain size of _activeBlock would be cut into two pieces:
                (1) The recycle part: large enough to filled in with at least
                   one array(SIZE_T + rn * S)
                (2) Real garbage: RemainSize() - RecyclePart.
-            */
-            size_t maxSize;
-            (rn == 0) ? maxSize = S : maxSize = (SIZE_T + rn * S);
-            _activeBlock->getMem(maxSize, ret);
+            */            
+            _activeBlock->getMem(_activeBlock->getRemainSize(), ret);
             getMemRecycleList(rn)->pushFront(ret);
 
             #ifdef MEM_DEBUG
