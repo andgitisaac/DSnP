@@ -1,0 +1,104 @@
+adt> adta -s jordan
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   
+
+adt> adta -s jordano
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   
+
+adt> adta -s jorda
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   
+
+adt> adta -s jordan
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+
+
+adt> adta -s jordana
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+[  4] = jorda   
+
+adt> adtd -s jordani
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+
+
+adt> adtd -s jord
+Error: "jord" is not found!
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+
+
+adt> adta -r 30
+
+adt> adtp
+=== ADT (array) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+[  4] = shtqj   [  5] = relwv   [  6] = ifxjr   [  7] = yprwl   
+[  8] = ykvrx   [  9] = joplr   [ 10] = cnthz   [ 11] = pwtqa   
+[ 12] = tvywv   [ 13] = ztxzr   [ 14] = mevxc   [ 15] = qgqfs   
+[ 16] = iigbq   [ 17] = blzsf   [ 18] = mwccj   [ 19] = hrvdb   
+[ 20] = blurl   [ 21] = dppnp   [ 22] = jhxme   [ 23] = pnqpg   
+[ 24] = vbcye   [ 25] = mfvhj   [ 26] = wivra   [ 27] = guqvi   
+[ 28] = ffpcr   [ 29] = usfki   [ 30] = lgkne   [ 31] = oajjh   
+[ 32] = tgqox   [ 33] = emybc   
+
+adt> adtd -front 5
+
+adt> adtp
+=== ADT (array) ===
+[  0] = usfki   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+[  4] = shtqj   [  5] = relwv   [  6] = ifxjr   [  7] = yprwl   
+[  8] = ykvrx   [  9] = joplr   [ 10] = cnthz   [ 11] = pwtqa   
+[ 12] = tvywv   [ 13] = ztxzr   [ 14] = mevxc   [ 15] = qgqfs   
+[ 16] = iigbq   [ 17] = blzsf   [ 18] = mwccj   [ 19] = hrvdb   
+[ 20] = blurl   [ 21] = dppnp   [ 22] = jhxme   [ 23] = pnqpg   
+[ 24] = vbcye   [ 25] = mfvhj   [ 26] = wivra   [ 27] = guqvi   
+[ 28] = ffpcr   
+
+adt> adtd -back 5
+
+adt> adtp
+=== ADT (array) ===
+[  0] = usfki   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+[  4] = shtqj   [  5] = relwv   [  6] = ifxjr   [  7] = yprwl   
+[  8] = ykvrx   [  9] = joplr   [ 10] = cnthz   [ 11] = pwtqa   
+[ 12] = tvywv   [ 13] = ztxzr   [ 14] = mevxc   [ 15] = qgqfs   
+[ 16] = iigbq   [ 17] = blzsf   [ 18] = mwccj   [ 19] = hrvdb   
+[ 20] = blurl   [ 21] = dppnp   [ 22] = jhxme   [ 23] = pnqpg   
+
+
+adt> adtd -r 5
+
+adt> adtp
+=== ADT (array) ===
+[  0] = usfki   [  1] = blurl   [  2] = jorda   [  3] = jorda   
+[  4] = shtqj   [  5] = pnqpg   [  6] = ifxjr   [  7] = yprwl   
+[  8] = ykvrx   [  9] = joplr   [ 10] = cnthz   [ 11] = pwtqa   
+[ 12] = tvywv   [ 13] = dppnp   [ 14] = mevxc   [ 15] = qgqfs   
+[ 16] = jhxme   [ 17] = blzsf   [ 18] = mwccj   
+
+adt> adtd -all
+
+adt> adtp
+=== ADT (array) ===
+
+
+adt> q -f
+
