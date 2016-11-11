@@ -110,7 +110,7 @@ public:
    bool erase(const T& x) { // Done	
    		for(T* it = _data; it < _data + _size; ++it)
    			if(*(it) == x){
-   				erase(iterator(it));
+   				erase(it);
    				return true;
    			}
    		return false;
