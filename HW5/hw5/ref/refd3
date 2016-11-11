@@ -1,0 +1,104 @@
+adt> adta -s jordan
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   
+
+adt> adta -s jordano
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   
+
+adt> adta -s jorda
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   
+
+adt> adta -s jordan
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+
+
+adt> adta -s jordana
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+[  4] = jorda   
+
+adt> adtd -s jordani
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+
+
+adt> adtd -s jord
+Error: "jord" is not found!
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+
+
+adt> adta -r 30
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = jorda   [  1] = jorda   [  2] = jorda   [  3] = jorda   
+[  4] = vkuux   [  5] = fitho   [  6] = mqjny   [  7] = xqsdp   
+[  8] = agdue   [  9] = kdczf   [ 10] = nvphq   [ 11] = nmzhu   
+[ 12] = nukxh   [ 13] = jvxby   [ 14] = ncerx   [ 15] = jbalb   
+[ 16] = gzxwg   [ 17] = ojtnr   [ 18] = nblyy   [ 19] = shtqj   
+[ 20] = relwv   [ 21] = ifxjr   [ 22] = yprwl   [ 23] = ykvrx   
+[ 24] = mfyxd   [ 25] = wqlqh   [ 26] = uhlfe   [ 27] = hokex   
+[ 28] = cdmtz   [ 29] = yrjtj   [ 30] = hgpgd   [ 31] = tduet   
+[ 32] = bybne   [ 33] = gutrz   
+
+adt> adtd -front 5
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = fitho   [  1] = mqjny   [  2] = xqsdp   [  3] = agdue   
+[  4] = kdczf   [  5] = nvphq   [  6] = nmzhu   [  7] = nukxh   
+[  8] = jvxby   [  9] = ncerx   [ 10] = jbalb   [ 11] = gzxwg   
+[ 12] = ojtnr   [ 13] = nblyy   [ 14] = shtqj   [ 15] = relwv   
+[ 16] = ifxjr   [ 17] = yprwl   [ 18] = ykvrx   [ 19] = mfyxd   
+[ 20] = wqlqh   [ 21] = uhlfe   [ 22] = hokex   [ 23] = cdmtz   
+[ 24] = yrjtj   [ 25] = hgpgd   [ 26] = tduet   [ 27] = bybne   
+[ 28] = gutrz   
+
+adt> adtd -back 5
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = fitho   [  1] = mqjny   [  2] = xqsdp   [  3] = agdue   
+[  4] = kdczf   [  5] = nvphq   [  6] = nmzhu   [  7] = nukxh   
+[  8] = jvxby   [  9] = ncerx   [ 10] = jbalb   [ 11] = gzxwg   
+[ 12] = ojtnr   [ 13] = nblyy   [ 14] = shtqj   [ 15] = relwv   
+[ 16] = ifxjr   [ 17] = yprwl   [ 18] = ykvrx   [ 19] = mfyxd   
+[ 20] = wqlqh   [ 21] = uhlfe   [ 22] = hokex   [ 23] = cdmtz   
+
+
+adt> adtd -r 5
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = fitho   [  1] = mqjny   [  2] = kdczf   [  3] = nvphq   
+[  4] = nmzhu   [  5] = nukxh   [  6] = jvxby   [  7] = ncerx   
+[  8] = jbalb   [  9] = gzxwg   [ 10] = nblyy   [ 11] = shtqj   
+[ 12] = ifxjr   [ 13] = yprwl   [ 14] = mfyxd   [ 15] = wqlqh   
+[ 16] = uhlfe   [ 17] = hokex   [ 18] = cdmtz   
+
+adt> adtd -all
+
+adt> adtp
+=== ADT (dlist) ===
+
+
+adt> q -f
+

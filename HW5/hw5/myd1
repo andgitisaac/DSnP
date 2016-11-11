@@ -1,0 +1,40 @@
+adt> adta -r 20
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = vkuux   [  1] = fitho   [  2] = mqjny   [  3] = xqsdp   
+[  4] = agdue   [  5] = kdczf   [  6] = nvphq   [  7] = nmzhu   
+[  8] = nukxh   [  9] = jvxby   [ 10] = ncerx   [ 11] = jbalb   
+[ 12] = gzxwg   [ 13] = ojtnr   [ 14] = nblyy   [ 15] = shtqj   
+[ 16] = relwv   [ 17] = ifxjr   [ 18] = yprwl   [ 19] = ykvrx   
+
+
+adt> adtd -front 3
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = xqsdp   [  1] = agdue   [  2] = kdczf   [  3] = nvphq   
+[  4] = nmzhu   [  5] = nukxh   [  6] = jvxby   [  7] = ncerx   
+[  8] = jbalb   [  9] = gzxwg   [ 10] = ojtnr   [ 11] = nblyy   
+[ 12] = shtqj   [ 13] = relwv   [ 14] = ifxjr   [ 15] = yprwl   
+[ 16] = ykvrx   
+
+adt> adtd -back 5
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = xqsdp   [  1] = agdue   [  2] = kdczf   [  3] = nvphq   
+[  4] = nmzhu   [  5] = nukxh   [  6] = jvxby   [  7] = ncerx   
+[  8] = jbalb   [  9] = gzxwg   [ 10] = ojtnr   [ 11] = nblyy   
+
+
+adt> adtd -rand 4
+
+adt> adtp
+=== ADT (dlist) ===
+[  0] = xqsdp   [  1] = agdue   [  2] = nvphq   [  3] = nmzhu   
+[  4] = jvxby   [  5] = ncerx   [  6] = jbalb   [  7] = gzxwg   
+
+
+adt> q -f
+
