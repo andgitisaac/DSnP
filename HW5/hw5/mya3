@@ -88,11 +88,11 @@ adt> adtd -r 5
 
 adt> adtp
 === ADT (array) ===
-[  0] = usfki   [  1] = jorda   [  2] = jorda   [  3] = shtqj   
-[  4] = ifxjr   [  5] = yprwl   [  6] = ykvrx   [  7] = joplr   
-[  8] = cnthz   [  9] = pwtqa   [ 10] = tvywv   [ 11] = ztxzr   
-[ 12] = qgqfs   [ 13] = iigbq   [ 14] = mwccj   [ 15] = hrvdb   
-[ 16] = blurl   [ 17] = dppnp   [ 18] = jhxme   
+[  0] = usfki   [  1] = blurl   [  2] = jorda   [  3] = jorda   
+[  4] = shtqj   [  5] = pnqpg   [  6] = ifxjr   [  7] = yprwl   
+[  8] = ykvrx   [  9] = joplr   [ 10] = cnthz   [ 11] = pwtqa   
+[ 12] = tvywv   [ 13] = dppnp   [ 14] = mevxc   [ 15] = qgqfs   
+[ 16] = jhxme   [ 17] = blzsf   [ 18] = mwccj   
 
 adt> adtd -all
 

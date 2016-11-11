@@ -41,14 +41,12 @@ public:
       iterator operator ++ (int) { // Done
       	iterator tmp = (*this);
       	++(*this);
-      	// ++_node;
       	return tmp;
       }
       iterator& operator -- () { --_node; return (*this); } // Done
       iterator operator -- (int) { // Done
       	iterator tmp = (*this);
       	--(*this);
-      	// --_node;
       	return tmp;
       }
       iterator operator + (int i) const { // Done 	
@@ -89,26 +87,24 @@ public:
    		if(_size == _capacity) expand();
    		_data[_size] = x;
    		++_size;
-   		// sort();
    }
-   void pop_front() {
+   void pop_front() { // Done
    		if(_size == 1) --_size;
    		if(_size >= 2){
    			_data[0] = _data[_size - 1];
    			--_size;
    		}
-   		// erase(begin());
    }
    void pop_back() {  if(_size) --_size; } // Done
 
    bool erase(iterator pos) { // Done
-   		if(!_size) return false;
-   		if(pos == _data) pop_front();
+   		if(!_size) return false;   		
+   		else if(_size == 1) --_size;
    		else{
-   			for(T* it = pos._node; it < _data + _size - 1; ++it)
-   				*(it) = *(it + 1);
+   			T* it = pos._node;
+   			*(it) = *(_data + _size - 1);   			
    			--_size;
-   		}   			
+   		}	 			
    		return true;
    }
    bool erase(const T& x) { // Done	

@@ -66,13 +66,13 @@ adt> adtd -s 123
 
 adt> adtp
 === ADT (array) ===
-[  0] = 001   [  1] = 123   [  2] = 456   
+[  0] = 001   [  1] = 456   [  2] = 123   
 
 adt> adtd -s 001
 
 adt> adtp
 === ADT (array) ===
-[  0] = 456   [  1] = 123   
+[  0] = 123   [  1] = 456   
 
 adt> adtd -s 123
 
