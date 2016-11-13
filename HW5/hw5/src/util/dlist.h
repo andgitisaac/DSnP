@@ -10,8 +10,8 @@
 #define DLIST_H
 
 #include <cassert>
-#include <iostream>
-using namespace std;
+// #include <iostream>
+// using namespace std;
 
 template <class T> class DList;
 
@@ -43,7 +43,7 @@ public:
    DList() {
       _head = new DListNode<T>(T());
       _head->_prev = _head->_next = _head; // _head is a dummy node
-      _isSorted = false;
+      // _isSorted = false;
    }
    ~DList() { clear(); delete _head; }
 
@@ -89,7 +89,7 @@ public:
       	else return false;
       }
       bool operator == (const iterator& i) const { // Done
-      	return !(*this != i); 
+      	return !(*this != i);
       }
 
    private:
