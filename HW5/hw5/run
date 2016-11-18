@@ -1,0 +1,11 @@
+make a
+echo running array.....
+./adtTest.array -f doComp > mya 2>&1
+make d
+echo running dlist.....
+./adtTest.dlist -f doComp > myd 2>&1
+make b
+echo running bst.....
+./adtTest.bst -f doComp > myb 2>&1
+make cleanall
+echo finished

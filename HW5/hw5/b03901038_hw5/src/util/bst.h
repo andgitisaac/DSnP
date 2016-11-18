@@ -67,6 +67,7 @@ public:
    		}
    		else{
    			p = _node->_parent;
+        if(!p) return (*this);
    			while(p && _node == p->_right){
    				_node = p;
    				p = p->_parent;
