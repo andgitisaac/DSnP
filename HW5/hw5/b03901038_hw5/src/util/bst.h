@@ -79,7 +79,7 @@ public:
    		}
    		return (*this);
    	}
-   	iterator& operator ++ (int) { // Done
+   	iterator operator ++ (int) { // Done
    		iterator tmp = iterator(*this);
    		++(*this);
    		return tmp;
