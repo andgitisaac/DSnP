@@ -148,23 +148,15 @@ public:
    		BSTreeNode<T>* deleteNode = pos._node;
    		if(deleteNode->_right && deleteNode->_right != _tail){
    			if(deleteNode->_left){
-   				// BSTreeNode<T>* succ = successor(deleteNode);
-   				// T copyData = succ->_data;
-   				// deleteNode->_data = copyData;
-   				// succ->_parent->_left = 0;
-       //         // if(succ->_right) succ->_parent->_left = succ->_right;
-       //         // else succ->_parent->_left = 0;
-       //         succ->_left = deleteNode->_left;
-       //         succ->_right = deleteNode->_right;
-       //         succ->_parent = deleteNode->_parent;
-          T s = (++pos)._node->_data;
-          erase(pos);
-          deleteNode->_data = s;
-   			}
+   				BSTreeNode<T>* succ = successor(pos)._node;
+   				T copyData = succ->_data;   				
+   				erase(++pos);
+   				deleteNode->_data = copyData;
+   		}
    			else{
    				reconnect(deleteNode, deleteNode->_right);
-          delete deleteNode;
-          --_size;
+          		delete deleteNode;
+          		--_size;
    			}
    		}
    		else if(deleteNode->_left){
@@ -181,8 +173,8 @@ public:
    		else{
    			(deleteNode->_right == _tail) ? (reconnect(deleteNode, _tail))
    										: (reconnect(deleteNode, deleteNode->_left));
-        delete deleteNode;
-        --_size;
+        	delete deleteNode;
+        	--_size;
    		}   		
    		return true;
    }
@@ -219,7 +211,6 @@ private:
 	void insert_recursive(const T& x, BSTreeNode<T>* current, bool direction, bool flag) {
 		// direction "false": go to left child 
 		if(current == _tail){
-         // cout << "case A" << endl;
 			BSTreeNode<T>* newNode = new BSTreeNode<T>(x, _tail->_parent, _tail, 0);
 			if(current == _root){
 				_root = newNode;
@@ -256,6 +247,7 @@ private:
 	}
 
 	BSTreeNode<T>* successor(BSTreeNode<T>* current) {
+
 		if(current->_right && current->_right != _tail)
 			return min(current->_right);
 		else if(current->_right == _tail){
@@ -266,9 +258,6 @@ private:
          current->_right = _tail;
          _tail->_parent = current->_right;
          return returnNode;
-         // current = current->_left;
-         // while(current->_right) current = current->_right;
-         // return current;
       }
 		else{
 			BSTreeNode<T>* p;
@@ -281,6 +270,10 @@ private:
 		}
 		return current;
 	}
+	iterator successor(iterator pos) {
+		return (++pos);
+	}
+
 
 	void reconnect(BSTreeNode<T>* x, BSTreeNode<T>* y) { // Done
 		if(y)
@@ -303,7 +296,7 @@ private:
 			_Print(n->_left, l + 1);
 			_Print(n->_right, l + 1);
 		}
-   }
+    }
 
 };
 
