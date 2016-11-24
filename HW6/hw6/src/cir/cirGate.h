@@ -45,6 +45,9 @@ public:
    GateType getType() const { return _type; } // Done
    void setType(GateType type) { _type = type; } // Done. Maybe unsed!
 
+   string getSymbol() const { return _symbol; } // Done. Maybe unused!
+   void setSymbol(string symbol) { _symbol = symbol; } // Done
+
    // Printing functions
    virtual void printGate() const = 0;
    void reportGate() const;
@@ -65,6 +68,7 @@ private:
     GateType _type;
     unsigned _gateId;
     unsigned _lineNo;
+    string _symbol;
     mutable bool flag;
     GateList _faninList;
     GateList _fanoutList;

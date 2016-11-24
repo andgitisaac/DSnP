@@ -30,10 +30,11 @@ public:
 
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
-   CirGate* getGate(unsigned gid) const { return 0; }
+   CirGate* getGate(unsigned gid) const { return (gid < _M_count + _O_count + 1) ? (_gateVarList[gid]) : (0); }
 
    // Member functions about circuit construction
    bool readCircuit(const string&);
+   CirGate* linkToExistGateOrUndefGate(unsigned gid);
 
    // Member functions about circuit reporting
    void printSummary() const;
@@ -45,6 +46,7 @@ public:
 
 private:
     GateList _gateVarList;
+    unsigned _M_count, _I_count, _L_count, _O_count, _A_count;
 };
 
 #endif // CIR_MGR_H

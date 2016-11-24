@@ -160,6 +160,19 @@ parseError(CirParseError err)
 /**************************************************************/
 /*   class CirMgr member functions for circuit construction   */
 /**************************************************************/
+
+CirGate*
+CirMgr::linkToExistGateOrUndefGate(unsigned gid)
+{
+    CirGate* gate = getGate(gid);
+    if(!gate){
+        cerr << "Set UNDEF" << endl;
+        _gateVarList[gid] = new UndefGate(gid);
+        gate = getGate(gid);
+    }
+    return gate;
+}
+
 bool
 CirMgr::readCircuit(const string& fileName)
 {
@@ -202,13 +215,18 @@ CirMgr::readCircuit(const string& fileName)
    cerr << "lineNo:" << lineNo << endl << endl;
    ++lineNo;
 
-   _gateVarList.resize(1 + coef[0] + coef[3], 0); // CONST + M + O
+   _M_count = coef[0]; _I_count = coef[1]; _L_count = coef[2];
+   _O_count = coef[3]; _A_count = coef[4];
+
+   _gateVarList.resize(1 + _M_count + _O_count, 0); // CONST + M + O
 
    // Add ConstGate
    _gateVarList[0] = new ConstGate;
 
    // Parse inputs
-   for(unsigned i = 0; i < coef[1]; ++i){
+   vector<unsigned> tmpIn;
+   tmpIn.resize(_I_count, 0);
+   for(unsigned i = 0; i < _I_count; ++i){
         getline(ifs, line);
         if(line.empty()){
             cout << "line " << lineNo+1 << "is empty" << endl;
@@ -223,6 +241,7 @@ CirMgr::readCircuit(const string& fileName)
         id = myStr2Unsigned(tok);
         cerr << "input ID:" << id  << " ,lineNo:" << lineNo << endl;
 
+        tmpIn[i] = id;
         _gateVarList[id / 2] = new PIGate(id/2, lineNo);
         ++lineNo;
    }
@@ -230,9 +249,9 @@ CirMgr::readCircuit(const string& fileName)
    
    // Parse outputs into vector tmpOut
    vector<unsigned> tmpOut;
-   tmpOut.resize(coef[3], 0);
+   tmpOut.resize(_O_count, 0);
 
-   for(unsigned i = 0; i < coef[3]; ++i){
+   for(unsigned i = 0; i < _O_count; ++i){
         getline(ifs, line);
         if(line.empty()){
             cout << "line " << lineNo+1 << "is empty" << endl;
@@ -245,28 +264,121 @@ CirMgr::readCircuit(const string& fileName)
         }
         myStrGetTok(line, tok);
         id = myStr2Unsigned(tok);
+        tmpOut[i] = id;
         cerr << "output ID:" << id  << " ,lineNo:" << lineNo << endl;
         
         ++lineNo;
    }
    cerr << endl;
 
-   // Parse AND GATEs
+   // Parse AND GATEs, save fanouts of AND in tmpAND[3k]
+   vector<unsigned> tmpAND; // outputs ID of kth AND save in tmpAND[3k + 1] and tmpAND[3k + 2]
+   tmpAND.resize(3 * _A_count, 0);
+
+   for(unsigned i = 0; i < _A_count; ++i){
+        getline(ifs, line);
+        if(line.empty()){
+            cout << "line " << lineNo+1 << "is empty" << endl;
+            return false;
+        }
+        if(!isdigit(line[0])){
+            cout << "line " << lineNo+1 << "Invalid : begin with space" << endl;
+            return false;
+        }
+
+        begin = myStrGetTok(line, tok);
+        id = myStr2Unsigned(tok);
+        cerr << "AND ID:" << id  << " ,lineNo:" << lineNo << endl;
+
+        _gateVarList[id / 2] = new AigGate(id/2, lineNo);
+        tmpAND[3*i] = id;
+        for(size_t j = 0; j < 2; ++j){
+            // Have not HANDLE PARSE ERROR yet...
+            begin = myStrGetTok(line, tok, begin);
+            id = myStr2Unsigned(tok);
+            cerr << "AND FanOut " << j << " ID:" << id << endl;
+            tmpAND[3*i + j + 1] = id;
+        }
+
+        ++lineNo;
+   }
+   cerr << endl;
+
+   // Construct graph, connenct Fanouts and AIG_GATE
+   cerr << "Connenct Fanouts and AIG_GATE" << endl;
+   for(unsigned i = 0; i < _A_count; ++i){
+        unsigned fo1ID = tmpAND[3*i + 1], fo2ID = tmpAND[3*i + 2];
+        cerr << "AIG ID:" << tmpAND[3*i] 
+            << " ,Fanout1:" << fo1ID
+            << " ,Fanout2:" << fo2ID << endl;
+
+        CirGate* AIG = getGate(tmpAND[3*i] / 2);
+        CirGate* fo1 = linkToExistGateOrUndefGate(fo1ID / 2);
+        CirGate* fo2 = linkToExistGateOrUndefGate(fo2ID / 2);
+
+        AIG->addFanin(fo1, fo1ID % 2);
+        AIG->addFanin(fo2, fo2ID % 2);
+        fo1->addFanout(AIG);
+        fo2->addFanout(AIG);
+   }
+   cerr << endl;
+
+   // Construct PO
+   cerr << "Connenct POs" << endl;
+   for(unsigned i = 0; i < _O_count; ++i){
+        unsigned poID = tmpOut[i];
+        cerr << "PO ID:" << poID << endl;
+        CirGate* PO = new POGate(_I_count + 2, _M_count + i + 1);
+        CirGate* gate = linkToExistGateOrUndefGate(poID / 2);
+        PO->addFanin(gate, poID % 2);
+        gate->addFanout(PO);
+
+        _gateVarList[_M_count + i + 1] = PO;
+   }
+   cerr << endl;
+
+   // Parse Symbol
+   cerr << "Set Symbol" << endl;
+   while(getline(ifs, line)){
+        if(line.empty()){
+            cout << "line " << lineNo+1 << "is empty" << endl;
+            return false;
+        }
+        if(line == "c") break; // Have not handled c with trailing white spaces yet
+        bool doInput;
+        if(line[0] == 'i') doInput = true;
+        else if(line[0] == 'o') doInput = false;
+        else{
+            cout << "line " << lineNo+1 << "with Invalid I/O name: " << line[0] << endl;
+            return false;
+        }
+
+        begin = myStrGetTok(line, tok); // i.g. i0 reset / o1 done
+        id = myStr2Unsigned(tok.substr(1)); // symbol start from 0
+        begin = myStrGetTok(line, tok, begin); // Need handle symbol name contain white spaceQQ
+        string symbol = tok;
+        // Have not HANDLE PARSE ERROR yet...
+
+        if(doInput){ // Have not set symbol yet...
+            id = tmpIn[id];
+            getGate(id / 2)->setSymbol(symbol);
+            cerr << "set symbol of input id " << id << " as:" << symbol << endl;
+        }
+        else{
+            id = tmpOut[id];
+            getGate(id / 2)->setSymbol(symbol);
+            cerr << "set symbol of output id " << id << " as:" << symbol << endl;
+        }
+        ++lineNo;
+   }
+   cerr << endl;
+
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-   cerr << "finished" << endl;
+   cerr << "Read file finished" << endl;
+   ifs.close();
+   line.clear(); tok.clear();
+   coef.clear(); tmpIn.clear();
+   tmpOut.clear(); tmpAND.clear();
 
    return true;
 }
