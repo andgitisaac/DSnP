@@ -176,6 +176,7 @@ CirMgr::linkToExistGateOrUndefGate(unsigned gid)
 bool
 CirMgr::readCircuit(const string& fileName)
 {
+   flag = false;
    ifstream ifs(fileName.c_str(), ifstream::in);
    if(!ifs.is_open()) return false;
 
@@ -328,7 +329,7 @@ CirMgr::readCircuit(const string& fileName)
    for(unsigned i = 0; i < _O_count; ++i){
         unsigned poID = tmpOut[i];
         cerr << "PO ID:" << poID << endl;
-        CirGate* PO = new POGate(_I_count + 2, _M_count + i + 1);
+        CirGate* PO = new POGate( _M_count + i + 1, _I_count + 2);
         CirGate* gate = linkToExistGateOrUndefGate(poID / 2);
         PO->addFanin(gate, poID % 2);
         gate->addFanout(PO);
@@ -375,6 +376,8 @@ CirMgr::readCircuit(const string& fileName)
 
    
    cerr << "Read file finished" << endl;
+
+   flag = true;
    ifs.close();
    line.clear(); tok.clear();
    coef.clear(); tmpIn.clear();
@@ -398,33 +401,80 @@ Circuit Statistics
 void
 CirMgr::printSummary() const
 {
+    if(!flag){
+        cout << "Error: circuit is not yet constructed!!" << endl;
+        return;
+    }
+    cout << endl
+        << "Circuit Statistics" << endl
+        << "==================" << endl
+        << "  PI" << setw(12) << right << _I_count << endl
+        << "  PO" << setw(12) << right << _O_count << endl
+        << "  AIG" << setw(11) << right << _A_count << endl
+        << "------------------" << endl
+        << "  Total" << setw(9) << right << _I_count + _O_count + _A_count << endl;
 }
 
 void
 CirMgr::printNetlist() const
 {
+    if(!flag){
+        cout << "Error: circuit is not yet constructed!!" << endl;
+        return;
+    }
+    int count = 0;
+    cout << endl;
+    for (unsigned i = 0; i < _M_count + _O_count + 1; ++i) {
+        CirGate *gate = getGate(i);
+        if (!gate) continue;
+        if (gate->getType() == PO_GATE)
+            gate->printGate(count);
+    }
+    flagReset();
 }
 
 void
 CirMgr::printPIs() const
 {
-   cout << "PIs of the circuit:";
-   cout << endl;
+    if(!flag){
+        cout << "Error: circuit is not yet constructed!!" << endl;
+        return;
+    }
+    cout << "PIs of the circuit:";
+    cout << endl;
 }
 
 void
 CirMgr::printPOs() const
 {
-   cout << "POs of the circuit:";
-   cout << endl;
+    if(!flag){
+        cout << "Error: circuit is not yet constructed!!" << endl;
+        return;
+    }
+    cout << "POs of the circuit:";
+    cout << endl;
 }
 
 void
 CirMgr::printFloatGates() const
 {
+    if(!flag){
+        cout << "Error: circuit is not yet constructed!!" << endl;
+        return;
+    }
 }
 
 void
 CirMgr::writeAag(ostream& outfile) const
 {
+}
+
+void 
+CirMgr::flagReset() const 
+{
+    for (unsigned i = 0; i < _M_count + _O_count + 1; ++i){
+        CirGate *gate = getGate(i);
+        if(gate) gate->resetGateFlag();
+        // if (!gate) gate->flag = false;
+    }
 }
