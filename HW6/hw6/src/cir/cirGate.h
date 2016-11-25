@@ -31,8 +31,6 @@ public:
 
    #define NEG 0x1 // Use for an inverting I/O
 
-
-
    // Basic access methods
    string getTypeStr() const; // Done
 
@@ -49,7 +47,7 @@ public:
    void setSymbol(string symbol) { _symbol = symbol; } // Done
 
    // Printing functions
-   virtual void printGate() const = 0;
+   virtual void printGate(int& count) const = 0;
    void reportGate() const;
    void reportFanin(int level) const;
    void reportFanout(int level) const;
@@ -60,21 +58,23 @@ public:
    CirGate* getFanout(size_t i) const; // Done
    void addFanout(CirGate* gate); // Done
 
-
    bool isInv(size_t i) const { return (size_t)_faninList[i] & NEG; } // Done
 
+   void printGateDetail(string& detail, int& count) const;
+   void resetGateFlag() const { flag = false; }
 
 private:
+        
+
+protected:
+    // WTF
     GateType _type;
     unsigned _gateId;
     unsigned _lineNo;
     string _symbol;
-    mutable bool flag;
+    mutable bool flag; // gate has been visited or not
     GateList _faninList;
     GateList _fanoutList;
-
-protected:
-    // WTF
 };
 
 class ConstGate : public CirGate
@@ -82,7 +82,7 @@ class ConstGate : public CirGate
 public:
     ConstGate() : CirGate(CONST_GATE) {};
     ~ConstGate() {}
-    void printGate() const {};
+    void printGate(int& count) const;
 };
 
 class PIGate : public CirGate
@@ -90,7 +90,7 @@ class PIGate : public CirGate
 public:
     PIGate(unsigned i, unsigned l) : CirGate(PI_GATE, i, l) {};
     ~PIGate() {}    
-    void printGate() const {};
+    void printGate(int& count) const;
 };
 
 class POGate : public CirGate
@@ -98,7 +98,7 @@ class POGate : public CirGate
 public:
     POGate(unsigned i, unsigned l) : CirGate(PO_GATE, i, l) {};
     ~POGate() {}
-    void printGate() const {};
+    void printGate(int& count) const;
 };
 
 class UndefGate : public CirGate
@@ -106,7 +106,7 @@ class UndefGate : public CirGate
 public:
     UndefGate(unsigned i) : CirGate(UNDEF_GATE, i) {};
     ~UndefGate() {}
-    void printGate() const {};
+    void printGate(int& count) const{ return; };
 };
 
 class AigGate : public CirGate
@@ -114,7 +114,7 @@ class AigGate : public CirGate
 public:
     AigGate(unsigned i, unsigned l) : CirGate(AIG_GATE, i, l) {};
     ~AigGate() {}
-    void printGate() const {};
+    void printGate(int& count) const;
 };
 
 #endif // CIR_GATE_H
