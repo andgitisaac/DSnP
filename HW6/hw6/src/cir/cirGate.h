@@ -26,8 +26,8 @@ class CirGate
 {
 public:
    CirGate(GateType type, unsigned gateId = 0, unsigned lineNo = 0):
-    _type(type), _gateId(gateId), _lineNo(lineNo), flag(false) {}
-   virtual ~CirGate() {}
+    _type(type), _gateId(gateId), _lineNo(lineNo), flag(false) {} // Done
+   virtual ~CirGate() { _faninList.clear(); _fanoutList.clear(); } // Done
 
    #define NEG 0x1 // Use for an inverting I/O
 
@@ -35,7 +35,7 @@ public:
    string getTypeStr() const; // Done
 
    unsigned getLineNo() const { return _lineNo; } // Done
-   void setLineNo(unsigned lineNo) { _lineNo = lineNo; } // Done. Maybe unsed!
+   // void setLineNo(unsigned lineNo) { _lineNo = lineNo; } // Done. Maybe unsed!
 
    unsigned getGateId() const { return _gateId; } // Done
    void setGateId(unsigned id) { _gateId = id; } // Done. Maybe unsed!
@@ -46,8 +46,10 @@ public:
    string getSymbol() const { return _symbol; } // Done. Maybe unused!
    void setSymbol(string symbol) { _symbol = symbol; } // Done
 
+   bool visited() const { return flag; } // Done
+
    // Printing functions
-   virtual void printGate(int& count) const = 0;
+   virtual void printGate(int& count) const = 0; // Done
    void reportGate() const;
    void reportFanin(int level) const;
    void reportFanout(int level) const;
@@ -60,17 +62,18 @@ public:
 
    bool isInv(size_t i) const { return (size_t)_faninList[i] & NEG; } // Done
 
-   void printGateDetail(string& detail, int& count) const;
-   void resetGateFlag() const { flag = false; }
+   void printGateDetail(string& detail, int& count) const; // Done
+   void resetGateFlag() const { flag = false; } // Done
+
+   void validAig(string& str, unsigned& aig) const;  // Done
 
 private:
         
 
 protected:
-    // WTF
     GateType _type;
     unsigned _gateId;
-    unsigned _lineNo;
+    const unsigned _lineNo;
     string _symbol;
     mutable bool flag; // gate has been visited or not
     GateList _faninList;

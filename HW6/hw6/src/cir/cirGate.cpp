@@ -77,6 +77,24 @@ CirGate::addFanout(CirGate* gate)
     _fanoutList.push_back(gate);
 }
 
+void
+CirGate::validAig(string& str, unsigned& aig) const
+{
+    if (flag) return;
+    for (unsigned i = 0; i < _faninList.size(); ++i)
+        getFanin(i)->validAig(str, aig);
+    if (_type == AIG_GATE) {
+        flag = true;
+        stringstream ss;
+        ss << _gateId * 2
+            << " " << getFanin(0)->getGateId() * 2 + isInv(0)
+            << " " << getFanin(1)->getGateId() * 2 + isInv(1)
+            << endl;
+        str += ss.str();
+        ++aig;
+    }
+}
+
 // Inheritance printing functions
 void
 CirGate::printGateDetail(string &detail, int& count) const

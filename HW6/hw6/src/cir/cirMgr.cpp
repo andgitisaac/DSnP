@@ -65,7 +65,7 @@ enum CirParseError {
 /**************************************/
 static unsigned lineNo = 0;  // in printing, lineNo needs to ++
 static unsigned colNo  = 0;  // in printing, colNo needs to ++
-static char buf[1024];
+// static char buf[1024];
 static string errMsg;
 static int errInt;
 static CirGate *errGate;
@@ -160,13 +160,19 @@ parseError(CirParseError err)
 /**************************************************************/
 /*   class CirMgr member functions for circuit construction   */
 /**************************************************************/
+CirMgr::~CirMgr()
+{
+    for(unsigned i = 0; i < _gateVarList.size(); i++)
+        delete _gateVarList[i];
+    tmpAND.clear(); tmpIn.clear(); tmpOut.clear();
+}
 
 CirGate*
 CirMgr::linkToExistGateOrUndefGate(unsigned gid)
 {
     CirGate* gate = getGate(gid);
     if(!gate){
-        cerr << "Set UNDEF" << endl;
+        // cerr << "Gate Var:" << gid << " Set UNDEF" << endl;
         _gateVarList[gid] = new UndefGate(gid);
         gate = getGate(gid);
     }
@@ -178,7 +184,10 @@ CirMgr::readCircuit(const string& fileName)
 {
    flag = false;
    ifstream ifs(fileName.c_str(), ifstream::in);
-   if(!ifs.is_open()) return false;
+   if(!ifs.is_open()){
+        cout << "Cannot open design " << fileName << "!!" << endl;
+        return false;
+   }
 
    // Rule: aag*M*I*L*O*A\n (* means space)
    string line, tok;
@@ -206,14 +215,14 @@ CirMgr::readCircuit(const string& fileName)
             begin = myStrGetTok(line, tok, begin);
             id = myStr2Unsigned(tok);
             coef.push_back(id);
-            cerr << "last coef:" << coef.back() << endl;
+            // cerr << "last coef:" << coef.back() << endl;
         }        
    }
    if(coef.size() != 5){
         cout << "aag first line format is wrong or missing" << endl;
         return false;
    }
-   cerr << "lineNo:" << lineNo << endl << endl;
+   // cerr << "lineNo:" << lineNo << endl << endl;
    ++lineNo;
 
    _M_count = coef[0]; _I_count = coef[1]; _L_count = coef[2];
@@ -225,7 +234,7 @@ CirMgr::readCircuit(const string& fileName)
    _gateVarList[0] = new ConstGate;
 
    // Parse inputs
-   vector<unsigned> tmpIn;
+   // IdList tmpIn;
    tmpIn.resize(_I_count, 0);
    for(unsigned i = 0; i < _I_count; ++i){
         getline(ifs, line);
@@ -233,23 +242,23 @@ CirMgr::readCircuit(const string& fileName)
             cout << "line " << lineNo+1 << "is empty" << endl;
             return false;
         }
-        cerr << "input:" << line << "." << endl;
+        // cerr << "input:" << line << "." << endl;
         if(!isdigit(line[0]) || !isdigit(line[line.length()-1])){
             cout << "line " << lineNo+1 << "format invalid" << endl;
             return false;
         }
         myStrGetTok(line, tok);
         id = myStr2Unsigned(tok);
-        cerr << "input ID:" << id  << " ,lineNo:" << lineNo << endl;
+        // cerr << "input ID:" << id  << " ,lineNo:" << lineNo << endl;
 
         tmpIn[i] = id;
         _gateVarList[id / 2] = new PIGate(id/2, lineNo);
         ++lineNo;
    }
-   cerr << endl;
+   // cerr << endl;
    
    // Parse outputs into vector tmpOut
-   vector<unsigned> tmpOut;
+   // IdList tmpOut;
    tmpOut.resize(_O_count, 0);
 
    for(unsigned i = 0; i < _O_count; ++i){
@@ -258,7 +267,7 @@ CirMgr::readCircuit(const string& fileName)
             cout << "line " << lineNo+1 << "is empty" << endl;
             return false;
         }
-        cerr << "outputs:" << line << "." << endl;
+        // cerr << "outputs:" << line << "." << endl;
         if(!isdigit(line[0]) || !isdigit(line[line.length()-1])){
             cout << "line " << lineNo+1 << "format invalid" << endl;
             return false;
@@ -266,14 +275,14 @@ CirMgr::readCircuit(const string& fileName)
         myStrGetTok(line, tok);
         id = myStr2Unsigned(tok);
         tmpOut[i] = id;
-        cerr << "output ID:" << id  << " ,lineNo:" << lineNo << endl;
+        // cerr << "output ID:" << id  << " ,lineNo:" << lineNo << endl;
         
         ++lineNo;
    }
-   cerr << endl;
+   // cerr << endl;
 
    // Parse AND GATEs, save fanouts of AND in tmpAND[3k]
-   vector<unsigned> tmpAND; // outputs ID of kth AND save in tmpAND[3k + 1] and tmpAND[3k + 2]
+   // IdList tmpAND; // outputs ID of kth AND save in tmpAND[3k + 1] and tmpAND[3k + 2]
    tmpAND.resize(3 * _A_count, 0);
 
    for(unsigned i = 0; i < _A_count; ++i){
@@ -289,7 +298,7 @@ CirMgr::readCircuit(const string& fileName)
 
         begin = myStrGetTok(line, tok);
         id = myStr2Unsigned(tok);
-        cerr << "AND ID:" << id  << " ,lineNo:" << lineNo << endl;
+        // cerr << "AND ID:" << id  << " ,lineNo:" << lineNo << endl;
 
         _gateVarList[id / 2] = new AigGate(id/2, lineNo);
         tmpAND[3*i] = id;
@@ -297,21 +306,21 @@ CirMgr::readCircuit(const string& fileName)
             // Have not HANDLE PARSE ERROR yet...
             begin = myStrGetTok(line, tok, begin);
             id = myStr2Unsigned(tok);
-            cerr << "AND FanOut " << j << " ID:" << id << endl;
+            // cerr << "AND FanOut " << j << " ID:" << id << endl;
             tmpAND[3*i + j + 1] = id;
         }
 
         ++lineNo;
    }
-   cerr << endl;
+   // cerr << endl;
 
    // Construct graph, connenct Fanouts and AIG_GATE
-   cerr << "Connenct Fanouts and AIG_GATE" << endl;
+   // cerr << "Connenct Fanouts and AIG_GATE" << endl;
    for(unsigned i = 0; i < _A_count; ++i){
         unsigned fo1ID = tmpAND[3*i + 1], fo2ID = tmpAND[3*i + 2];
-        cerr << "AIG ID:" << tmpAND[3*i] 
-            << " ,Fanout1:" << fo1ID
-            << " ,Fanout2:" << fo2ID << endl;
+        // cerr << "AIG ID:" << tmpAND[3*i] 
+            // << " ,Fanout1:" << fo1ID
+            // << " ,Fanout2:" << fo2ID << endl;
 
         CirGate* AIG = getGate(tmpAND[3*i] / 2);
         CirGate* fo1 = linkToExistGateOrUndefGate(fo1ID / 2);
@@ -322,13 +331,13 @@ CirMgr::readCircuit(const string& fileName)
         fo1->addFanout(AIG);
         fo2->addFanout(AIG);
    }
-   cerr << endl;
+   // cerr << endl;
 
    // Construct PO
-   cerr << "Connenct POs" << endl;
+   // cerr << "Connenct POs" << endl;
    for(unsigned i = 0; i < _O_count; ++i){
         unsigned poID = tmpOut[i];
-        cerr << "PO ID:" << poID << endl;
+        // cerr << "PO ID:" << poID << endl;
         CirGate* PO = new POGate( _M_count + i + 1, _I_count + 2);
         CirGate* gate = linkToExistGateOrUndefGate(poID / 2);
         PO->addFanin(gate, poID % 2);
@@ -336,10 +345,10 @@ CirMgr::readCircuit(const string& fileName)
 
         _gateVarList[_M_count + i + 1] = PO;
    }
-   cerr << endl;
+   // cerr << endl;
 
    // Parse Symbol
-   cerr << "Set Symbol" << endl;
+   // cerr << "Set Symbol" << endl;
    while(getline(ifs, line)){
         if(line.empty()){
             cout << "line " << lineNo+1 << "is empty" << endl;
@@ -363,25 +372,22 @@ CirMgr::readCircuit(const string& fileName)
         if(doInput){ // Have not set symbol yet...
             id = tmpIn[id];
             getGate(id / 2)->setSymbol(symbol);
-            cerr << "set symbol of input id " << id << " as:" << symbol << endl;
+            // cerr << "set symbol of input id " << id << " as:" << symbol << endl;
         }
         else{
-            id = tmpOut[id];
-            getGate(id / 2)->setSymbol(symbol);
-            cerr << "set symbol of output id " << id << " as:" << symbol << endl;
+            getGate(_M_count + id + 1)->setSymbol(symbol);
+            // cerr << "set symbol of output id " << _M_count + id + 1 << " as:" << symbol << endl;
         }
         ++lineNo;
    }
-   cerr << endl;
-
+   // cerr << endl;
    
    cerr << "Read file finished" << endl;
 
    flag = true;
    ifs.close();
-   line.clear(); tok.clear();
-   coef.clear(); tmpIn.clear();
-   tmpOut.clear(); tmpAND.clear();
+   line.clear(); tok.clear(); coef.clear();
+   // tmpIn.clear(); tmpOut.clear(); tmpAND.clear();
 
    return true;
 }
@@ -441,6 +447,8 @@ CirMgr::printPIs() const
         return;
     }
     cout << "PIs of the circuit:";
+    for(unsigned i = 1; i < _I_count + 1; ++i)
+        cout << " " << _gateVarList[i]->getGateId();
     cout << endl;
 }
 
@@ -452,6 +460,8 @@ CirMgr::printPOs() const
         return;
     }
     cout << "POs of the circuit:";
+    for(unsigned i = _M_count + 1; i < _M_count + _O_count + 1; ++i)
+        cout << " " << _gateVarList[i]->getGateId();
     cout << endl;
 }
 
@@ -462,11 +472,79 @@ CirMgr::printFloatGates() const
         cout << "Error: circuit is not yet constructed!!" << endl;
         return;
     }
+
+    IdList floating, notUsed;
+    for(unsigned i = 0; i < _M_count + _O_count + 1; ++i){
+        CirGate* gate = getGate(i);
+        if(!gate) continue;
+        // Traversing floatings.
+        if(gate->getType() == AIG_GATE &&
+                (gate->getFanin(0)->getType() == UNDEF_GATE ||
+                gate->getFanin(1)->getType() == UNDEF_GATE) )
+            floating.push_back(gate->getGateId());
+        else if(gate->getType() == PO_GATE &&
+                gate->getFanin(0)->getType() == UNDEF_GATE)
+            floating.push_back(gate->getGateId());
+        // Traversing Unused.
+        if((gate->getType() == AIG_GATE || gate->getType() == PI_GATE) &&
+                !gate->getFanout(0))
+            notUsed.push_back(gate->getGateId());
+    }
+
+    if(!floating.empty()){
+        cout << "Gates with floating fanin(s):";
+        for (size_t i = 0; i < floating.size(); ++i) cout << ' ' << floating[i];
+        cout << endl;
+    }
+    if(!notUsed.empty()){
+        cout << "Gates defined but not used  :";
+        for (size_t i = 0; i < notUsed.size(); ++i) cout << ' ' << notUsed[i];
+        cout << endl;
+    }
+    floating.clear(); notUsed.clear();
 }
 
 void
 CirMgr::writeAag(ostream& outfile) const
 {
+    if(!flag){
+        cout << "Error: circuit is not yet constructed!!" << endl;
+        return;
+    }
+    string str = "";
+    unsigned aig = 0;
+    for (unsigned i = _M_count + 1; i <= _M_count + _O_count + 1; ++i) {
+        CirGate *gate = getGate(i);
+        if (gate && gate->getType() == PO_GATE)
+            gate->validAig(str, aig);
+    }
+    flagReset();
+
+    // Write head
+    outfile << "aag " << _M_count << " " << _I_count 
+            << " " << _L_count << " " << _O_count
+            << " " << aig << endl;
+
+    // Write Inputs
+    for(size_t i = 0; i < tmpIn.size(); ++i)
+        outfile << tmpIn[i] << endl;
+    // Write Outputs
+    for(size_t i = 0; i < tmpOut.size(); ++i)
+        outfile << tmpOut[i] << endl;
+    // Write AIG
+    outfile << str;
+
+    // Write Symbol
+    for (size_t i = 0; i < _I_count; ++i) {
+        string s = _gateVarList[i+1]->getSymbol();
+        if (!s.empty())    outfile << 'i' << i << ' ' << _gateVarList[i+1]->getSymbol() << endl;
+    }
+    for (size_t i = _M_count + 1; i < _M_count + _O_count + 1; ++i) {
+        if (!_gateVarList[i] || _gateVarList[i]->getSymbol() == "") continue;
+        outfile << 'o' << i - _M_count - 1<< ' ' << _gateVarList[i]->getSymbol() << endl;
+    }
+    outfile << "c" << endl << "AAG output by Andgit Isaac Peng" << endl;
+    str.clear();
 }
 
 void 
@@ -475,6 +553,5 @@ CirMgr::flagReset() const
     for (unsigned i = 0; i < _M_count + _O_count + 1; ++i){
         CirGate *gate = getGate(i);
         if(gate) gate->resetGateFlag();
-        // if (!gate) gate->flag = false;
     }
 }

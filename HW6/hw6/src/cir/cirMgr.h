@@ -25,28 +25,29 @@ extern CirMgr *cirMgr;
 class CirMgr
 {
 public:
-   CirMgr() {}
-   ~CirMgr() {}
+   CirMgr() : flag(false) {}  // Done
+   ~CirMgr();  // Done
 
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
-   CirGate* getGate(unsigned gid) const { return (gid < _M_count + _O_count + 1) ? (_gateVarList[gid]) : (0); }
+   CirGate* getGate(unsigned gid) const { return (gid < _M_count + _O_count + 1) ? (_gateVarList[gid]) : (0); }  // Done
 
    // Member functions about circuit construction
-   bool readCircuit(const string&);
-   CirGate* linkToExistGateOrUndefGate(unsigned gid);
+   bool readCircuit(const string&); // Done
+   CirGate* linkToExistGateOrUndefGate(unsigned gid); // Done
 
    // Member functions about circuit reporting
-   void printSummary() const;
-   void printNetlist() const;
-   void printPIs() const;
-   void printPOs() const;
-   void printFloatGates() const;
-   void writeAag(ostream&) const;
+   void printSummary() const; // Done
+   void printNetlist() const; // Done
+   void printPIs() const; // Done
+   void printPOs() const; // Done
+   void printFloatGates() const; // Done
+   void writeAag(ostream&) const; // Done
 
-   void flagReset() const;
+   void flagReset() const; // Done
 
 private:
+    IdList tmpIn, tmpOut, tmpAND;
     GateList _gateVarList;
     unsigned _M_count, _I_count, _L_count, _O_count, _A_count;
     bool flag; // Ture if the circuit net list has been constructed.
