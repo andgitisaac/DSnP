@@ -21,6 +21,15 @@ extern CirMgr *cirMgr;
 
 // TODO: Implement memeber functions for class(es) in cirGate.h
 
+// Global functions
+string
+unsigned2Str(unsigned n)
+{
+    stringstream ss;
+    ss << n;
+    return ss.str();
+}
+
 /**************************************/
 /*   class CirGate member functions   */
 /**************************************/
@@ -68,8 +77,68 @@ CirGate::addFanout(CirGate* gate)
     _fanoutList.push_back(gate);
 }
 
+// Inheritance printing functions
+void
+CirGate::printGateDetail(string &detail, int& count) const
+{
+    for(size_t i = 0; i < _faninList.size(); ++i){
+        detail.append(" ");
+        if(isInv(i)) detail.append("!");
+        if(getFanin(i)->getType() == UNDEF_GATE) detail.append("*");
+        detail.append(unsigned2Str(getFanin(i)->getGateId()));
+    }
+    if(!_symbol.empty()) detail.append(" (" + _symbol + ")");
+    cout << "[" << count++ << "] "
+        << setw(4) << left << getTypeStr() << detail << endl;
+}
 
+void
+ConstGate::printGate(int& count) const
+{
+    if(flag) return;
+    // for(size_t i = 0; i < _faninList.size(); ++i)
+    //     getFanin(i)->printGate(count);
 
+    string detail = "0";
+    printGateDetail(detail, count);
+    flag = true;    
+}
+
+void
+PIGate::printGate(int& count) const
+{
+    if(flag) return;
+    for(size_t i = 0; i < _faninList.size(); ++i)
+        getFanin(i)->printGate(count);
+
+    string detail = unsigned2Str(_gateId);
+    printGateDetail(detail, count);
+    flag = true;
+}
+
+void
+POGate::printGate(int& count) const
+{
+    if(flag) return;
+    for(size_t i = 0; i < _faninList.size(); ++i)
+        getFanin(i)->printGate(count);
+
+    string detail = unsigned2Str(_gateId);
+    printGateDetail(detail, count);
+    flag = true;
+}
+
+void
+AigGate::printGate(int& count) const
+{
+    if(flag) return;
+    for(size_t i = 0; i < _faninList.size(); ++i)
+        getFanin(i)->printGate(count);
+
+    string detail = unsigned2Str(_gateId);
+    printGateDetail(detail, count);
+    flag = true;
+}
 
 // Printing functions
 void
