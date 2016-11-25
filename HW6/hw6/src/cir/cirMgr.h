@@ -25,7 +25,7 @@ extern CirMgr *cirMgr;
 class CirMgr
 {
 public:
-   CirMgr(){}
+   CirMgr() {}
    ~CirMgr() {}
 
    // Access functions
@@ -44,9 +44,12 @@ public:
    void printFloatGates() const;
    void writeAag(ostream&) const;
 
+   void flagReset() const;
+
 private:
     GateList _gateVarList;
     unsigned _M_count, _I_count, _L_count, _O_count, _A_count;
+    bool flag; // Ture if the circuit net list has been constructed.
 };
 
 #endif // CIR_MGR_H
