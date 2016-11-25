@@ -172,7 +172,7 @@ CirMgr::linkToExistGateOrUndefGate(unsigned gid)
 {
     CirGate* gate = getGate(gid);
     if(!gate){
-        // cerr << "Gate Var:" << gid << " Set UNDEF" << endl;
+        cerr << "Gate Var:" << gid << " Set UNDEF" << endl;
         _gateVarList[gid] = new UndefGate(gid);
         gate = getGate(gid);
     }
@@ -334,14 +334,17 @@ CirMgr::readCircuit(const string& fileName)
    // cerr << endl;
 
    // Construct PO
-   // cerr << "Connenct POs" << endl;
+   cerr << "Connenct POs" << endl;
    for(unsigned i = 0; i < _O_count; ++i){
         unsigned poID = tmpOut[i];
         // cerr << "PO ID:" << poID << endl;
-        CirGate* PO = new POGate( _M_count + i + 1, _I_count + 2);
-        CirGate* gate = linkToExistGateOrUndefGate(poID / 2);
+        cerr << "lineNo:" << i + _I_count + 1 << endl;
+        CirGate* PO = new POGate( _M_count + i + 1, i + _I_count + 1);
+        CirGate* gate = linkToExistGateOrUndefGate(poID / 2);  
         PO->addFanin(gate, poID % 2);
         gate->addFanout(PO);
+        cerr << "Fanin of PO " << _M_count + i + 1 << " is:" << gate->getGateId() << endl;
+        cerr << "Fanin of PO " << _M_count + i + 1 << " is:" << PO->getFanin(0)->getGateId() << endl;
 
         _gateVarList[_M_count + i + 1] = PO;
    }

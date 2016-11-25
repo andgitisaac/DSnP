@@ -50,22 +50,23 @@ public:
 
    // Printing functions
    virtual void printGate(int& count) const = 0; // Done
-   void reportGate() const;
+   void reportGate() const; // Done
    void reportFanin(int level) const;
    void reportFanout(int level) const;
+   void reportOut(int level, int currentLevel) const;
+   void reportIn(int level, bool isInv, int currentLevel) const;
+   // void depthSearchReport(int level, bool dive, int currentLevel) const;
 
    // I/O access functions
    CirGate* getFanin(size_t i) const; // Done
    void addFanin(CirGate* gate, size_t phase = 0); // Done. phase = 1 if inverting
    CirGate* getFanout(size_t i) const; // Done
    void addFanout(CirGate* gate); // Done
-
    bool isInv(size_t i) const { return (size_t)_faninList[i] & NEG; } // Done
 
    void printGateDetail(string& detail, int& count) const; // Done
    void resetGateFlag() const { flag = false; } // Done
-
-   void validAig(string& str, unsigned& aig) const;  // Done
+   void validAig(string& str, unsigned& aig) const; // Done
 
 private:
         
@@ -73,7 +74,7 @@ private:
 protected:
     GateType _type;
     unsigned _gateId;
-    const unsigned _lineNo;
+    unsigned _lineNo;
     string _symbol;
     mutable bool flag; // gate has been visited or not
     GateList _faninList;

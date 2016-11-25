@@ -114,8 +114,6 @@ void
 ConstGate::printGate(int& count) const
 {
     if(flag) return;
-    // for(size_t i = 0; i < _faninList.size(); ++i)
-    //     getFanin(i)->printGate(count);
 
     string detail = "0";
     printGateDetail(detail, count);
@@ -162,17 +160,73 @@ AigGate::printGate(int& count) const
 void
 CirGate::reportGate() const
 {
+    stringstream ss;
+    string str;
+    cout << "==================================================" << endl;
+    ss << "= " << getTypeStr() << "(" << getGateId() << ")";
+    if(!getSymbol().empty()) ss << "\"" << getSymbol() << "\"";
+    ss << ", line " << getLineNo()+1; 
+    str = ss.str();
+    cout << setw(49) << left << str << "=" << endl;
+    cout << "==================================================" << endl;
 }
 
 void
 CirGate::reportFanin(int level) const
 {
    assert (level >= 0);
+   // depthSearchReport(level, true, 0);
+   reportIn(level, false, 0);
+   cirMgr->flagReset();
 }
 
 void
 CirGate::reportFanout(int level) const
 {
    assert (level >= 0);
+   // depthSearchReport(level, false, 0);
+   reportOut(level, 0);
+   cirMgr->flagReset();
 }
 
+void
+CirGate::reportOut(int level, int currentLevel) const
+{
+    if(currentLevel > level) return;
+    const GateList* nextLevel = &_fanoutList;
+
+    if(!(*nextLevel).empty()) flag = true;
+    if(currentLevel == 0){
+        cout << getTypeStr() << " " << getGateId() << endl;
+        flag = true;
+        ++currentLevel;
+    }
+
+    for(size_t i = 0; i < (*nextLevel).size(); ++i){
+        for(int k = 0; k < currentLevel; ++k) cout << "  ";
+        if((*nextLevel)[i]->isInv(i)) cout << "!";
+        cout << (*nextLevel)[i]->getTypeStr() << " " << (*nextLevel)[i]->getGateId();
+        if((*nextLevel)[i]->visited()) cout << " (*)" << endl;
+        else{
+            cout << endl;
+            (*nextLevel)[i]->reportOut(level, currentLevel+1);
+        }
+    }
+}
+
+void 
+CirGate::reportIn(int level, bool isInv, int currentLevel) const
+{
+    for(int k = 0; k < currentLevel; ++k) cout << "  ";
+    if(isInv) cout << "!";
+    cout << getTypeStr() << " " << getGateId();
+    if(level == 0) cout << endl;
+    else if(flag)cout << " (*)" << endl;
+    else{
+        cout << endl;
+        if(!_faninList.empty()) flag = true;
+        for(size_t i = 0; i < _faninList.size(); ++i){
+            getFanin(i)->reportIn(level-1,  this->isInv(i), currentLevel+1);
+        }
+    }
+}
