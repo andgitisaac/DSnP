@@ -172,7 +172,7 @@ CirMgr::linkToExistGateOrUndefGate(unsigned gid)
 {
     CirGate* gate = getGate(gid);
     if(!gate){
-        cerr << "Gate Var:" << gid << " Set UNDEF" << endl;
+        // cerr << "Gate Var:" << gid << " Set UNDEF" << endl;
         _gateVarList[gid] = new UndefGate(gid);
         gate = getGate(gid);
     }
@@ -256,7 +256,7 @@ CirMgr::readCircuit(const string& fileName)
         ++lineNo;
    }
    // cerr << endl;
-   
+
    // Parse outputs into vector tmpOut
    // IdList tmpOut;
    tmpOut.resize(_O_count, 0);
@@ -305,6 +305,7 @@ CirMgr::readCircuit(const string& fileName)
         for(size_t j = 0; j < 2; ++j){
             // Have not HANDLE PARSE ERROR yet...
             begin = myStrGetTok(line, tok, begin);
+            // cerr << "tok:" << tok << endl;
             id = myStr2Unsigned(tok);
             // cerr << "AND FanOut " << j << " ID:" << id << endl;
             tmpAND[3*i + j + 1] = id;
@@ -319,8 +320,8 @@ CirMgr::readCircuit(const string& fileName)
    for(unsigned i = 0; i < _A_count; ++i){
         unsigned fo1ID = tmpAND[3*i + 1], fo2ID = tmpAND[3*i + 2];
         // cerr << "AIG ID:" << tmpAND[3*i] 
-            // << " ,Fanout1:" << fo1ID
-            // << " ,Fanout2:" << fo2ID << endl;
+        //     << " ,Fanout1:" << fo1ID
+        //     << " ,Fanout2:" << fo2ID << endl;
 
         CirGate* AIG = getGate(tmpAND[3*i] / 2);
         CirGate* fo1 = linkToExistGateOrUndefGate(fo1ID / 2);
@@ -334,22 +335,22 @@ CirMgr::readCircuit(const string& fileName)
    // cerr << endl;
 
    // Construct PO
-   cerr << "Connenct POs" << endl;
+   // cerr << "Connenct POs" << endl;
    for(unsigned i = 0; i < _O_count; ++i){
         unsigned poID = tmpOut[i];
         // cerr << "PO ID:" << poID << endl;
-        cerr << "lineNo:" << i + _I_count + 1 << endl;
+        // cerr << "getLineNoo:" << i + _I_count + 1 << endl;
         CirGate* PO = new POGate( _M_count + i + 1, i + _I_count + 1);
         CirGate* gate = linkToExistGateOrUndefGate(poID / 2);  
         PO->addFanin(gate, poID % 2);
         gate->addFanout(PO);
-        cerr << "Fanin of PO " << _M_count + i + 1 << " is:" << gate->getGateId() << endl;
-        cerr << "Fanin of PO " << _M_count + i + 1 << " is:" << PO->getFanin(0)->getGateId() << endl;
+        // cerr << "Fanin of PO " << _M_count + i + 1 << " is:" << gate->getGateId() << endl;
+        // cerr << "Fanin of PO " << _M_count + i + 1 << " is:" << PO->getFanin(0)->getGateId() << endl;
 
         _gateVarList[_M_count + i + 1] = PO;
    }
    // cerr << endl;
-
+   
    // Parse Symbol
    // cerr << "Set Symbol" << endl;
    while(getline(ifs, line)){
@@ -385,13 +386,14 @@ CirMgr::readCircuit(const string& fileName)
    }
    // cerr << endl;
    
-   cerr << "Read file finished" << endl;
+   // cerr << "Read file finished" << endl;
 
    flag = true;
    ifs.close();
    line.clear(); tok.clear(); coef.clear();
    // tmpIn.clear(); tmpOut.clear(); tmpAND.clear();
-
+   // 
+   
    return true;
 }
 
@@ -450,8 +452,13 @@ CirMgr::printPIs() const
         return;
     }
     cout << "PIs of the circuit:";
-    for(unsigned i = 1; i < _I_count + 1; ++i)
-        cout << " " << _gateVarList[i]->getGateId();
+    // for (unsigned i = 0, cnt = 0; i < _M_count + _O_count + 1 && cnt < _I_count; ++i) {
+    //     CirGate *PI = getGate(i);
+    //     if (PI0 && PI->getType() == PI_GATE)
+    //         cout << " " << PI->getGateId();
+    // }
+    for(unsigned i = 0; i < _I_count; ++i)
+        cout << " " << tmpIn[i] / 2;
     cout << endl;
 }
 
@@ -463,8 +470,11 @@ CirMgr::printPOs() const
         return;
     }
     cout << "POs of the circuit:";
-    for(unsigned i = _M_count + 1; i < _M_count + _O_count + 1; ++i)
+    for(unsigned i = _M_count + 1; i < _M_count + _O_count + 1; ++i){
+        CirGate *PO = getGate(i);
+        if(PO && PO->getType() == PO_GATE)
         cout << " " << _gateVarList[i]->getGateId();
+    }
     cout << endl;
 }
 

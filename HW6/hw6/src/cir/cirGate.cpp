@@ -165,7 +165,8 @@ CirGate::reportGate() const
     cout << "==================================================" << endl;
     ss << "= " << getTypeStr() << "(" << getGateId() << ")";
     if(!getSymbol().empty()) ss << "\"" << getSymbol() << "\"";
-    ss << ", line " << getLineNo()+1; 
+    if(getType() == UNDEF_GATE) ss << ", line " << getLineNo(); 
+    else ss << ", line " << getLineNo()+1; 
     str = ss.str();
     cout << setw(49) << left << str << "=" << endl;
     cout << "==================================================" << endl;
@@ -185,31 +186,59 @@ CirGate::reportFanout(int level) const
 {
    assert (level >= 0);
    // depthSearchReport(level, false, 0);
-   reportOut(level, 0);
+   // reportOut(level, 0);
+   reportOut(level, false, 0);
    cirMgr->flagReset();
 }
 
-void
-CirGate::reportOut(int level, int currentLevel) const
-{
-    if(currentLevel > level) return;
-    const GateList* nextLevel = &_fanoutList;
+// void
+// CirGate::reportOut(int level, int currentLevel) const
+// {
+//     if(currentLevel > level) return;
+//     const GateList* nextLevel = &_fanoutList;
 
-    if(!(*nextLevel).empty()) flag = true;
-    if(currentLevel == 0){
-        cout << getTypeStr() << " " << getGateId() << endl;
-        flag = true;
-        ++currentLevel;
-    }
+//     if(!(*nextLevel).empty()) flag = true;
+//     if(currentLevel == 0){
+//         cout << getTypeStr() << " " << getGateId() << endl;
+//         flag = true;
+//         ++currentLevel;
+//     }
 
-    for(size_t i = 0; i < (*nextLevel).size(); ++i){
-        for(int k = 0; k < currentLevel; ++k) cout << "  ";
-        if((*nextLevel)[i]->isInv(i)) cout << "!";
-        cout << (*nextLevel)[i]->getTypeStr() << " " << (*nextLevel)[i]->getGateId();
-        if((*nextLevel)[i]->visited()) cout << " (*)" << endl;
-        else{
-            cout << endl;
-            (*nextLevel)[i]->reportOut(level, currentLevel+1);
+//     for(size_t i = 0; i < (*nextLevel).size(); ++i){
+//         for(int k = 0; k < currentLevel; ++k) cout << "  ";
+//         if((*nextLevel)[i]->isInv(i)) cout << "!";
+//         cout << (*nextLevel)[i]->getTypeStr() << " " << (*nextLevel)[i]->getGateId();
+//         if((*nextLevel)[i]->visited()) cout << " (*)" << endl;
+//         else{
+//             cout << endl;
+//             (*nextLevel)[i]->reportOut(level, currentLevel+1);
+//         }
+//     }
+// }
+
+void CirGate::reportOut(int level, bool isInv, int currentLevel) const {
+    for (int i = 0; i < currentLevel; ++i) cout << "  ";
+    if (isInv) cout << '!';
+    cout << getTypeStr() << ' ' << getGateId();
+    if (level == 0) cout << endl;
+    else if(flag) cout << " (*)" << endl;
+    else{
+        cout << endl;
+        if(!_fanoutList.empty()) flag = true;
+        for (size_t i = 0; i < _fanoutList.size(); ++i){
+            const CirGate* gate = getFanout(i);
+            bool inv = false;
+            unsigned j = 0;
+            while (true) {
+                CirGate* g = gate->getFanin(j);
+                if (g == 0) break;
+                if (this == g){
+                    inv = gate->isInv(j);
+                    break;
+                }
+                ++j;
+            }
+            getFanout(i)->reportOut(level-1, inv, currentLevel+1);
         }
     }
 }

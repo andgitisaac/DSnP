@@ -53,7 +53,8 @@ public:
    void reportGate() const; // Done
    void reportFanin(int level) const;
    void reportFanout(int level) const;
-   void reportOut(int level, int currentLevel) const;
+   void reportOut(int level, bool isInv, int currentLevel) const;
+   // void reportOut(int level, int currentLevel) const;
    void reportIn(int level, bool isInv, int currentLevel) const;
    // void depthSearchReport(int level, bool dive, int currentLevel) const;
 
