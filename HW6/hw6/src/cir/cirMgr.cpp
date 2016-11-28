@@ -185,7 +185,7 @@ CirMgr::readCircuit(const string& fileName)
    flag = false;
    ifstream ifs(fileName.c_str(), ifstream::in);
    if(!ifs.is_open()){
-        cout << "Cannot open design " << fileName << "!!" << endl;
+        cout << "Cannot open design \"" << fileName << "\"!!" << endl;
         return false;
    }
 
