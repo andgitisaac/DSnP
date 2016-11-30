@@ -47,6 +47,7 @@ public:
    void flagReset() const; // Done
 
 private:
+    vector<string> tmpSymbol;
     IdList tmpIn, tmpOut, tmpAND;
     GateList _gateVarList;
     unsigned _M_count, _I_count, _L_count, _O_count, _A_count;

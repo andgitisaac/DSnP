@@ -101,8 +101,8 @@ CirGate::printGateDetail(string &detail, int& count) const
 {
     for(size_t i = 0; i < _faninList.size(); ++i){
         detail.append(" ");
-        if(isInv(i)) detail.append("!");
         if(getFanin(i)->getType() == UNDEF_GATE) detail.append("*");
+        if(isInv(i)) detail.append("!");
         detail.append(unsigned2Str(getFanin(i)->getGateId()));
     }
     if(!_symbol.empty()) detail.append(" (" + _symbol + ")");

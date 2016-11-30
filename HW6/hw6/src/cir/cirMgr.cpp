@@ -367,10 +367,13 @@ CirMgr::readCircuit(const string& fileName)
             return false;
         }
 
+        tmpSymbol.push_back(line);
+
         begin = myStrGetTok(line, tok); // i.g. i0 reset / o1 done
         id = myStr2Unsigned(tok.substr(1)); // symbol start from 0
-        begin = myStrGetTok(line, tok, begin); // Need handle symbol name contain white spaceQQ
-        string symbol = tok;
+        // begin = myStrGetTok(line, tok, begin); // Need handle symbol name contain white spaceQQ        
+        // string symbol = tok;
+        string symbol = line.substr(begin+1);
         // Have not HANDLE PARSE ERROR yet...
 
         if(doInput){ // Have not set symbol yet...
@@ -548,14 +551,19 @@ CirMgr::writeAag(ostream& outfile) const
     outfile << str;
 
     // Write Symbol
-    for (size_t i = 0; i < _I_count; ++i) {
-        string s = _gateVarList[i+1]->getSymbol();
-        if (!s.empty())    outfile << 'i' << i << ' ' << _gateVarList[i+1]->getSymbol() << endl;
+    // for (size_t i = 0; i < _I_count; ++i) {
+    //     string s = _gateVarList[i+1]->getSymbol();
+    //     if (!s.empty())    outfile << 'i' << i << ' ' << _gateVarList[i+1]->getSymbol() << endl;
+    // }
+    // for (size_t i = _M_count + 1; i < _M_count + _O_count + 1; ++i) {
+    //     if (!_gateVarList[i] || _gateVarList[i]->getSymbol() == "") continue;
+    //     outfile << 'o' << i - _M_count - 1<< ' ' << _gateVarList[i]->getSymbol() << endl;
+    // }
+    
+    for(size_t i = 0; i < tmpSymbol.size(); ++i){
+      outfile << tmpSymbol[i] << endl;
     }
-    for (size_t i = _M_count + 1; i < _M_count + _O_count + 1; ++i) {
-        if (!_gateVarList[i] || _gateVarList[i]->getSymbol() == "") continue;
-        outfile << 'o' << i - _M_count - 1<< ' ' << _gateVarList[i]->getSymbol() << endl;
-    }
+
     outfile << "c" << endl << "AAG output by Andgit Isaac Peng" << endl;
     str.clear();
 }
