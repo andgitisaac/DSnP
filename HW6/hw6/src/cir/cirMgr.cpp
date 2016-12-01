@@ -560,6 +560,11 @@ CirMgr::writeAag(ostream& outfile) const
     //     outfile << 'o' << i - _M_count - 1<< ' ' << _gateVarList[i]->getSymbol() << endl;
     // }
     
+    // Note that since PI's variable ID can be larger than AIG variable ID, and
+    // the order of cirw of the new AIGER file must follow the original AIGER 
+    // file. Thus, the string vector tmpSymbol saved the content of the original
+    // file. Maybe creating a vector of PI that follow the order of the original
+    // AIGER, and traversing this vector by index is way more better.
     for(size_t i = 0; i < tmpSymbol.size(); ++i){
       outfile << tmpSymbol[i] << endl;
     }
