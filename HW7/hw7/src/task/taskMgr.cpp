@@ -86,6 +86,14 @@ void
 TaskMgr::add(size_t nMachines)
 {
    // TODO...
+   for(size_t i = 0; i < nMachines; ){
+        TaskNode newNode;
+        if(_taskHash.insert(newNode)){
+            _taskHeap.insert(newNode);
+            ++i;
+            cerr << "Task node inserted: " << newNode << endl;
+        }
+   }
 }
 
 // return true if TaskNode is successfully inserted
@@ -94,6 +102,12 @@ bool
 TaskMgr::add(const string& s, size_t l)
 {
    // TODO...
+   TaskNode newNode(s, l);
+   if(_taskHash.insert(newNode)){
+        _taskHeap.insert(newNode);
+        cerr << "Task node inserted: " << newNode << endl;
+        return true;
+   }
    return false;
 }
 
@@ -107,6 +121,12 @@ bool
 TaskMgr::assign(size_t l)
 {
    // TODO...
+   if(!_taskHeap.size()) return false;
+   TaskNode newMin = _taskHeap[0];
+   newMin += l;
+   _taskHeap.delMin();
+   _taskHeap.insert(newMin);
+   _taskHash.update(newMin);   
    return true;
 }
 
