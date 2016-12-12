@@ -47,30 +47,37 @@ public:
    void delData(size_t i) { // Done
         // Same as delMin in pdf but assign beginning idx as i.
         if(i >= size()) return;
-        size_t p = i, n = size(), t;
-        Data tmp = _data.back();
-        _data.pop_back();
-        while(p != 0){
-            t = (p + 1) / 2 - 1;
-            if(tmp < _data[t]){
-                _data[p] = _data[t];
-                p = t;
-            }
-            else return;
+        size_t p = i, t = 2 * (p + 1) - 1, n = size();
+        // p, t is the index of parent, left child(thus minus 1), respectively.
+        bool sink = false;
+        while(t < n){
+           if(t != n-1) // right child exist
+              if(_data[t+1] < _data[t]) ++t; // go to the smallest child
+           if(_data.back() < _data[t] || _data.back().getLoad() == _data[t].getLoad()) 
+              break;
+           _data[p] = _data[t];
+           sink = true;
+           p = t, t = 2 * (p + 1) - 1;
         }
-        _data[p] = tmp;
+        _data[p] = _data.back();
+        _data.resize(n-1);
 
-        while(true){
-            t = 2 * p + 1;
-            if(t >= n) break;
-            if(t < n - 1 && _data[t + 1] < _data[t]) ++t;
-            if(_data[t] < tmp){
-                _data[p] = _data[t];
-                p = t;
-            }
-            else break;
+        if(!sink){
+           p = i;
+           while(p > 0){
+              t = (p + 1) / 2 - 1;
+              if(_data[t] < _data[p] || _data[t].getLoad() == _data[p].getLoad()) 
+                 break;
+              swap(_data[p], _data[t]);
+              p = t;
+           }
         }
-        _data[p] = tmp;
+   }
+
+   void swap(Data& x, Data& y) {
+      Data tmp = x;
+      x = y;
+      y = tmp;
    }
 
 private:

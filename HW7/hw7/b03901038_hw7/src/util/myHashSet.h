@@ -191,10 +191,21 @@ public:
    // return true if removed successfully (i.e. d is in the hash)
    // return false otherwise (i.e. nothing is removed)
    bool remove(const Data& d) {
+        // size_t n = bucketNum(d);
+        // for(size_t i = 0, size = _buckets[n].size(); i < size; ++i){
+        //     if(_buckets[n][i] == d){
+        //         _buckets[n].erase(_buckets[n].begin() + i);
+        //         return true;
+        //     }
+        // }
+        // return false;
+
         size_t n = bucketNum(d);
         for(size_t i = 0, size = _buckets[n].size(); i < size; ++i){
             if(_buckets[n][i] == d){
-                _buckets[n].erase(_buckets[n].begin() + i);
+                _buckets[n][i] = _buckets[n].back();
+                size_t size = _buckets[n].size();
+                _buckets[n].resize(--size);
                 return true;
             }
         }

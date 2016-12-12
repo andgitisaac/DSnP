@@ -1,8 +1,21 @@
-taski 10000
-taskn -r 10000
-taskq -heap
-taskr -r 50
-taskq -heap
+taski 3960000
+taskn -n ybobkc 14512
+taskn -n veclou 398
+taskn -n ncuhgt 16379
+taskn -n dcogql 12342
+taskn -n vpytqo 11867
+taskn -n asaxwc 6801
+taskn -n myzabv 18422
+taskn -n hoxmtn 19539
+taskn -n lzrgor 4946
+taskn -n gfyizy 2708
+taska 9507 -r 6
+taskn -r 9
+taskr -r 26
+taskn -r 46
+taskn -r 29
 taskq -hash
-usage
+taskq -heap
+taskq -min
+USAGE
 q -f
