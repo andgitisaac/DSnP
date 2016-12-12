@@ -1,0 +1,100 @@
+task> taski 10
+Task manager is initialized (10)
+
+task> taskn -r 10
+Task node inserted: (vkuuxf, 6704)
+Task node inserted: (thomqj, 10268)
+Task node inserted: (yxqsdp, 326)
+Task node inserted: (gduekd, 2176)
+Task node inserted: (zfnvph, 12751)
+Task node inserted: (nmzhun, 15398)
+Task node inserted: (kxhjvx, 1395)
+Task node inserted: (yncerx, 6977)
+Task node inserted: (balbgz, 18044)
+Task node inserted: (wgojtn, 13354)
+... 10 new task nodes are added.
+
+task> taskq -heap
+(yxqsdp, 326)
+(gduekd, 2176)
+(kxhjvx, 1395)
+(yncerx, 6977)
+(zfnvph, 12751)
+(nmzhun, 15398)
+(vkuuxf, 6704)
+(thomqj, 10268)
+(balbgz, 18044)
+(wgojtn, 13354)
+Number of tasks: 10
+
+task> taska 100
+Task assignment succeeds...
+Updating min: (yxqsdp, 426)
+
+task> taskq -heap
+(yxqsdp, 426)
+(kxhjvx, 1395)
+(vkuuxf, 6704)
+(yncerx, 6977)
+(gduekd, 2176)
+(nmzhun, 15398)
+(wgojtn, 13354)
+(thomqj, 10268)
+(balbgz, 18044)
+(zfnvph, 12751)
+Number of tasks: 10
+
+task> taska 1000
+Task assignment succeeds...
+Updating min: (kxhjvx, 1395)
+
+task> taskq -heap
+(kxhjvx, 1395)
+(yxqsdp, 1426)
+(vkuuxf, 6704)
+(yncerx, 6977)
+(gduekd, 2176)
+(nmzhun, 15398)
+(wgojtn, 13354)
+(thomqj, 10268)
+(balbgz, 18044)
+(zfnvph, 12751)
+Number of tasks: 10
+
+task> taska 1000 -r 10
+Task assignment succeeds...
+Updating min: (yxqsdp, 1426)
+Task assignment succeeds...
+Updating min: (gduekd, 2176)
+Task assignment succeeds...
+Updating min: (kxhjvx, 2395)
+Task assignment succeeds...
+Updating min: (yxqsdp, 2426)
+Task assignment succeeds...
+Updating min: (gduekd, 3176)
+Task assignment succeeds...
+Updating min: (kxhjvx, 3395)
+Task assignment succeeds...
+Updating min: (yxqsdp, 3426)
+Task assignment succeeds...
+Updating min: (gduekd, 4176)
+Task assignment succeeds...
+Updating min: (kxhjvx, 4395)
+Task assignment succeeds...
+Updating min: (yxqsdp, 4426)
+
+task> taskq -heap
+(yxqsdp, 4426)
+(gduekd, 5176)
+(vkuuxf, 6704)
+(yncerx, 6977)
+(kxhjvx, 5395)
+(nmzhun, 15398)
+(wgojtn, 13354)
+(thomqj, 10268)
+(balbgz, 18044)
+(zfnvph, 12751)
+Number of tasks: 10
+
+task> q -f
+

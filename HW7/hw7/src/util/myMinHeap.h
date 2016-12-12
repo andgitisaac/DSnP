@@ -48,7 +48,6 @@ public:
         // Same as delMin in pdf but assign beginning idx as i.
         if(i >= size()) return;
         size_t p = i, n = size(), t;
-        bool floating = false;
         Data tmp = _data.back();
         _data.pop_back();
         while(p != 0){
@@ -56,11 +55,10 @@ public:
             if(tmp < _data[t]){
                 _data[p] = _data[t];
                 p = t;
-                floating = true;
             }
+            else return;
         }
         _data[p] = tmp;
-        if(floating) return;
 
         while(true){
             t = 2 * p + 1;
