@@ -33,6 +33,32 @@ using namespace std;
 void
 CirMgr::sweep()
 {
+    for(unsigned i = 0; i < _dfsList.size(); ++i)
+        _dfsList[i]->_visited = true; // go through dfs
+    for(unsigned i = 0; i < _gateVarList.size(); ++i){
+        if(_gateVarList[i] && !_gateVarList[i]->isVisited()){
+            if(_gateVarList[i]->isAig() || _gateVarList[i]->getType() == UNDEF_GATE){
+                for(unsigned j = 0; j < 2; ++j){
+                    CirGate* gate = _gateVarList[i]->getFanin(j);
+                    if(gate && (gate->isVisited() || gate->getType() == PI_GATE))
+                        gate->removeFanout(_gateVarList[i]);
+                }
+            }
+        }
+    }
+    for(unsigned i = 0; i < _gateVarList.size(); ++i){
+        if(_gateVarList[i] && !_gateVarList[i]->isVisited()){
+            if(_gateVarList[i]->isAig() || _gateVarList[i]->getType() == UNDEF_GATE){
+                if(_gateVarList[i]->isAig()) --_A_count;
+                cout << "Sweeping: " + _gateVarList[i]->getTypeStr()
+                    << '(' << _gateVarList[i]->getGateId() << ") removed..."
+                    << endl;
+                delete _gateVarList[i];
+                _gateVarList[i] = 0;
+            }
+        }
+    }
+    flagReset();
 }
 
 // Recursively simplifying from POs;
