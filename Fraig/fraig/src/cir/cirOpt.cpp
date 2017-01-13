@@ -72,18 +72,18 @@ CirMgr::optimize()
             // CirGate* in1 = _dfsList[i]->getFanin(0), * in2 = _dfsList[i]->getFanin(1);
             vector<CirGate*> &withPhase = _dfsList[i]->_faninList;
             CirGate* noPhase[2] = {_dfsList[i]->getFanin(0), _dfsList[i]->getFanin(1)};
-            
+            string str = "Simplifying: ";
             if(withPhase[0] == withPhase[1]) // A & A = A
-                replace(_dfsList[i], noPhase[0], (size_t)withPhase[0] & 1);
+                replace(_dfsList[i], noPhase[0], (size_t)withPhase[0] & 1, str);
             else if(noPhase[0] == noPhase[1]) // A & ~A = 0, replace with Const 0.
-                replace(_dfsList[i], _gateVarList[0], false);
+                replace(_dfsList[i], _gateVarList[0], false, str);
             else if(withPhase[0] == _gateVarList[0] 
                     || withPhase[1] == _gateVarList[0]) // 0 & A = 0
-                replace(_dfsList[i], _gateVarList[0], false);
+                replace(_dfsList[i], _gateVarList[0], false, str);
             else if(noPhase[0] == _gateVarList[0] 
                     || noPhase[1] == _gateVarList[0]){ // 1 & A = A
                 size_t index = (noPhase[0] == _gateVarList[0]) ? 1 : 0;
-                replace(_dfsList[i], noPhase[index], (size_t)withPhase[index] & 1);
+                replace(_dfsList[i], noPhase[index], (size_t)withPhase[index] & 1, str);
             } 
             else continue;
 
@@ -127,9 +127,8 @@ CirMgr::optimize()
 // new -> old(AIG) -> out.
 // inv indicates whether the fanin of old is inverse or not.
 void 
-CirMgr::replace(CirGate* old, CirGate* tar, bool inv)
+CirMgr::replace(CirGate* old, CirGate* tar, bool inv, string& str)
 {
-    string str = "Simplifying: ";
     cout << str << tar->getGateId() << " merging "
         << (inv ? "!" : "") << old->getGateId() << "..." << endl;
 
