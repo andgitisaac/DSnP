@@ -415,8 +415,10 @@ void
 CirMgr::printNetlist() const
 {
    cout << endl;
-   for (unsigned i = 0, n = _dfsList.size(); i < n; ++i) {
-      cout << "[" << i << "] ";
+   for (unsigned i = 0, count = 0, n = _dfsList.size(); i < n; ++i) {
+      if(_dfsList[i]->getType() == UNDEF_GATE) continue; // Skip the floating gate.
+      cout << "[" << count << "] ";
+      ++count;
       _dfsList[i]->printGate();
    }
    flagReset();
