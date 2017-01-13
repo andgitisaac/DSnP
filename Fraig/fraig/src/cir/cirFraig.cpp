@@ -25,7 +25,12 @@ using namespace std;
 /**************************************/
 /*   Static varaibles and functions   */
 /**************************************/
-
+HashKey
+keyGen(CirGate* gate){
+    size_t a = (gate->getFanin(0)->getGateId() << 1) + gate->isInv(0);
+    size_t b = (gate->getFanin(1)->getGateId() << 1) + gate->isInv(1);
+    return (a < b) ? HashKey(a, b) : HashKey(b, a);
+}
 /*******************************************/
 /*   Public member functions about fraig   */
 /*******************************************/
@@ -34,6 +39,20 @@ using namespace std;
 void
 CirMgr::strash()
 {
+    HashMap<HashKey, CirGate*> h(getHashSize(_M_count));
+    for(size_t i = 0; i < _dfsList.size(); ++i){
+        CirGate* gate = _dfsList[i];
+        if(gate->getType() != AIG_GATE) continue;
+        HashKey k = keyGen(gate);
+        if(!h.insert(k, gate)){
+            CirGate* merge;
+            h.query(k, merge);
+            string str = "Strashing: ";
+            replace(gate, merge, false, str);
+            --_A_count;
+        }
+    }
+    DFSConstruct();
 }
 
 void
