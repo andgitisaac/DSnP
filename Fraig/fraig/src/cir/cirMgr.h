@@ -72,7 +72,7 @@ private:
    unsigned _M_count, _I_count, _L_count, _O_count, _A_count;
    bool flag; // Ture if the circuit net list has been constructed.
 
-   void replace(CirGate*, CirGate*, bool);
+   void replace(CirGate*, CirGate*, bool, string&);
 };
 
 #endif // CIR_MGR_H
