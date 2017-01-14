@@ -37,8 +37,10 @@ keyGen(CirGate* gate){
 // _floatList may be changed.
 // _unusedList and _undefList won't be changed
 void
-CirMgr::strash()
+CirMgr::strash() 
 {
+    // Bug: merging floating gate still exist by floating reportQQ
+    // Update: fix it!!(_gateVarList[] = 0 and delete _dfsList[])
     HashMap<HashKey, CirGate*> h(getHashSize(_M_count));
     for(size_t i = 0; i < _dfsList.size(); ++i){
         CirGate* gate = _dfsList[i];
@@ -48,7 +50,9 @@ CirMgr::strash()
             CirGate* merge;
             h.query(k, merge);
             string str = "Strashing: ";
-            replace(gate, merge, false, str);
+            replace(gate, merge, false, str); //Strash05.aag cirw is wrong!!!
+            _gateVarList[_dfsList[i]->getGateId()] = 0;
+            delete _dfsList[i];
             --_A_count;
         }
     }

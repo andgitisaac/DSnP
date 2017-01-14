@@ -523,7 +523,7 @@ CirMgr::writeAag(ostream& outfile) const
         outfile << tmpIn[i] << endl;
     // Write Outputs
     for(size_t i = 0; i < tmpOut.size(); ++i)
-        outfile << tmpOut[i] << endl;
+        outfile << tmpOut[i] << endl; // Need modified by _dfsList
     // Write AIG
     outfile << str;
 

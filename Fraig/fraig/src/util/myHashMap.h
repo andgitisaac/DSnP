@@ -106,7 +106,7 @@ public:
       }
 
       bool operator != (const iterator& i) const{ // Done
-         return (_hash != i._hash || _b != i._bId || _idx != i._idx);
+         return (_hash != i._hash || _b != i._b || _idx != i._idx);
       }
       bool operator == (const iterator& i) const{ return !((*this) != i); } // Done
 
@@ -138,11 +138,11 @@ public:
       if(_buckets == 0) return end();      
       for(size_t i = 0; i < _numBuckets; ++i)
          if(!_buckets[i].empty())
-            return iterator(this, i);
+            return iterator(const_cast<HashMap<HashKey, HashData>*>(this), i);
       return end();
    }
    // Pass the end
-   iterator end() const { return iterator(this, _numBuckets); } // Done
+   iterator end() const { return iterator(const_cast<HashMap<HashKey, HashData>*>(this), _numBuckets); } // Done
    // return true if no valid data
    bool empty() const { // Done
       // return (begin() == end());

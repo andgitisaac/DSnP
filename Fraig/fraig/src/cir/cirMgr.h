@@ -13,6 +13,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <list>
 
 using namespace std;
 
@@ -21,6 +22,73 @@ using namespace std;
 #include "cirDef.h"
 
 extern CirMgr *cirMgr;
+
+class FECGroup
+{
+    friend class CirMgr;
+
+public:
+    FECGroup() {}
+    FECGroup(CirGate* gate) { _gateList.push_back(gate); }
+    ~FECGroup() { clear(); }
+
+    #define NEG 0x1
+
+    class iterator
+    {
+        friend class CirMgr;
+        friend class FECGroup;
+
+    public:
+        iterator() {}
+        iterator(std::vector<CirGate*>::iterator i) { _it = i; }
+
+        CirGate* operator * () { return (CirGate*)((size_t)(*_it) & ~size_t(NEG)); }
+        const CirGate* operator* () const { return (CirGate*)((size_t)(*_it) & ~(size_t)(0x1)); }
+
+        bool isInv() const { return ((size_t)(*_it) & (size_t)(0x1)); }
+
+        iterator& operator++ () { _it++; return (*this); }
+        iterator operator ++ (int) { iterator iter=(*this); ++(*this); return iter; }
+
+        iterator& operator= (const iterator& i) { _it = i._it; return (*this); }
+
+        bool operator == (const iterator& i) const { return (_it == i._it); }
+        bool operator != (const iterator& i) const { return !(*this == i); }
+
+    private:
+        vector<CirGate*>::iterator _it;
+    };
+
+    iterator begin() { return iterator(_gateList.begin()); }
+    iterator end() { return iterator(_gateList.end()); }
+    size_t size() const { return _gateList.size(); }
+    iterator erase(iterator &i) { i._it = _gateList.erase(i._it); return i; }
+    void clear() { _gateList.clear(); }
+
+    FECGroup& add(const CirGate* gate, const bool &inv)
+    {      
+        _gateList.push_back((CirGate*)((size_t)(gate) | (size_t)inv));
+        return(*this);
+    }
+
+private:
+    vector<CirGate*> _gateList;
+};
+
+class SimValue
+{
+public:
+    SimValue() {}
+    SimValue(size_t val = 0) : _value(val) {}
+    ~SimValue() {}
+
+    size_t operator () () const { return _value; }
+    bool operator == (const SimValue& v) const { return (_value == v._value); }
+
+private:
+    size_t _value;
+};
 
 class CirMgr
 {
@@ -37,8 +105,8 @@ public:
    CirGate* linkToExistGateOrUndefGate(unsigned gid); // Done
 
    // Member functions about circuit optimization
-   void sweep();
-   void optimize();
+   void sweep(); // Done
+   void optimize(); // Done
 
    // Member functions about simulation
    void randomSim();
@@ -46,13 +114,13 @@ public:
    void setSimLog(ofstream *logFile) { _simLog = logFile; }
 
    // Member functions about fraig
-   void strash();
+   void strash(); // Done
    void printFEC() const;
    void fraig();
 
    // Member functions about circuit reporting
    void printSummary() const; // Done
-   void printNetlist() const;
+   void printNetlist() const; // Done
    void printPIs() const; // Done
    void printPOs() const; // Done
    void printFloatGates() const; // Done
@@ -71,8 +139,15 @@ private:
    GateList _gateVarList, _dfsList;
    unsigned _M_count, _I_count, _L_count, _O_count, _A_count;
    bool flag; // Ture if the circuit net list has been constructed.
+   list<FECGroup> _fecGrps;
 
+   // private function of Optimization
    void replace(CirGate*, CirGate*, bool, string&);
+
+   // private function of Simulation
+   void simEachGate(HashMap<SimValue, FECGroup>& , unsigned&, const bool&);
+   void splitFECGroup(CirGate*, HashMap<SimValue, FECGroup>&);
+   void writeLog();
 };
 
 #endif // CIR_MGR_H

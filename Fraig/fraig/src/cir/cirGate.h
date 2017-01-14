@@ -30,7 +30,7 @@ class CirGate
 
 public:
    CirGate(GateType type, unsigned gateId = 0, unsigned lineNo = 0):
-    _type(type), _gateId(gateId), _lineNo(lineNo), _value(0), _visited(false) {}
+    _type(type), _gateId(gateId), _lineNo(lineNo), _simValue(0), _fecGrp(0), _visited(false) {}
    virtual ~CirGate() { _faninList.clear(); _fanoutList.clear(); }
 
    #define NEG 0x1 // Use for an inverting I/O
@@ -43,18 +43,24 @@ public:
    string getSymbol() const { return _symbol; } // Done
    void setSymbol(string symbol) { _symbol = symbol; } // Done
 
+   // Simulation access methods
+   void setSimValue(size_t v) { _simValue = v; }
+   size_t getSimValue() { return _simValue; }
+   void setFecGrp(size_t grp) { _fecGrp = grp; }
+   size_t getSFecGrp() { return _fecGrp; }
+
    // Boolin functions
    virtual bool isAig() const { return _type == AIG_GATE; } // Done   
    bool isUnused() const { return _fanoutList.empty(); } // Done. Maybe Unused.
    bool isVisited() const { return _visited; } // Done
 
    // Printing functions
-   virtual void printGate() const = 0;
-   void reportGate() const;
-   void reportFanin(int level) const;
-   void reportFanout(int level) const;
-   void reportOut(int level, bool isInv, int currentLevel) const;
-   void reportIn(int level, bool isInv, int currentLevel) const;
+   virtual void printGate() const = 0; // Done
+   void reportGate() const; // Done
+   void reportFanin(int level) const; // Done
+   void reportFanout(int level) const; // Done
+   void reportOut(int level, bool isInv, int currentLevel) const; // Done
+   void reportIn(int level, bool isInv, int currentLevel) const; // Done
 
    // List functions
    void DFSConstruct(); // Done
@@ -69,7 +75,7 @@ public:
    void removeFanout(size_t); // Done
    void removeFanout(CirGate*); // Done
    bool isInv(size_t i) const { return (size_t)_faninList[i] & NEG; } // Done
-   void printGateDetail(string& detail) const;
+   void printGateDetail(string& detail) const; // Done
    void resetGateFlag() const { _visited = false; } // Done
    void validAig(string& str, unsigned& aig) const; // Done
    
@@ -77,7 +83,8 @@ private:
 
 protected:
   GateType _type;
-  unsigned _gateId, _lineNo, _value;
+  unsigned _gateId, _lineNo;
+  size_t _simValue, _fecGrp;
   string _symbol;
   mutable bool _visited; // gate has been visited or not
   GateList _faninList, _fanoutList;
