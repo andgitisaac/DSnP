@@ -32,6 +32,8 @@ public:
     FECGroup(CirGate* gate) { _gateList.push_back(gate); }
     ~FECGroup() { clear(); }
 
+    CirGate* getHead() { return _gateList[0]; }
+
     #define NEG 0x1
 
     class iterator
@@ -120,11 +122,11 @@ public:
 
    // Member functions about circuit reporting
    void printSummary() const; // Done
-   void printNetlist() const; // Done
+   void printNetlist() const; // Done. With tmpOut Bug!!!!!!!!
    void printPIs() const; // Done
    void printPOs() const; // Done
    void printFloatGates() const; // Done
-   void printFECPairs() const;
+   void printFECPairs(); // Done
    void writeAag(ostream&) const; // Done
    void writeGate(ostream&, CirGate*) const;
 
@@ -145,7 +147,7 @@ private:
    void replace(CirGate*, CirGate*, bool, string&);
 
    // private function of Simulation
-   void simEachGate(HashMap<SimValue, FECGroup>& , unsigned&, const bool&);
+   void simEachGate(HashMap<SimValue, FECGroup>& , unsigned&, const bool& , size_t* const & = 0);
    void splitFECGroup(CirGate*, HashMap<SimValue, FECGroup>&);
    void writeLog();
 };

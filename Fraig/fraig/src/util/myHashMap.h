@@ -182,6 +182,16 @@ public:
       return false;
    }
 
+   bool query(const HashKey& k, HashData* &d) const { // Done. check
+      size_t b = bucketNum(k);
+      for(size_t i = 0; i < _buckets[b].size(); ++i)
+         if(_buckets[b][i].first == k){
+            d = &(_buckets[b][i].second);
+            return true;
+         }
+      return false;
+   }
+
    // update the entry in hash that is equal to k (i.e. == return true)
    // if found, update that entry with d and return true;
    // else insert d into hash as a new entry and return false;
