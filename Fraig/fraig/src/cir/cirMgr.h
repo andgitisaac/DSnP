@@ -148,7 +148,7 @@ private:
    void replace(CirGate*, CirGate*, bool, string&); // Done
    
    // private function of Simulation
-   void simEachGate(HashMap<SimValue, FECGroup>& , unsigned&, const bool& , size_t* const & = 0); // Done
+   void simEachGate(HashMap<SimValue, FECGroup>& , unsigned&, const bool& , unsigned* const & = 0); // Done
    void splitFECGroup(CirGate*, HashMap<SimValue, FECGroup>&); // Done
    void writeLog(); // Done
 };

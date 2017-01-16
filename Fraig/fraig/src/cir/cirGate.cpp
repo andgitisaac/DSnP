@@ -221,7 +221,7 @@ CirGate::reportGate() const
     cout << "==================================================" << endl;
     ss << "= " << getTypeStr() << "(" << getGateId() << ")";
     if(!getSymbol().empty()) ss << "\"" << getSymbol() << "\"";
-    if(getType() == UNDEF_GATE) ss << ", line " << getLineNo(); 
+    if(getType() == UNDEF_GATE || getType() == CONST_GATE) ss << ", line " << getLineNo(); 
     else ss << ", line " << getLineNo()+1; 
     str = ss.str();
     cout << setw(49) << left << str << "=" << endl;
