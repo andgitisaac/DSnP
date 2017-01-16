@@ -65,7 +65,7 @@ CirMgr::randomSim()
     // srand(time(NULL));
     HashMap<SimValue, FECGroup> newFecGrps(_dfsList.size());
 
-    // newFecGrps.insert(SimValue(0), FECGroup(_gateVarList[0])); // insert CONST
+    newFecGrps.insert(SimValue(0), FECGroup(_gateVarList[0])); // insert CONST
 
     // First time to simulate and generate FEC group.
     simEachGate(newFecGrps, bitRead, true);
@@ -121,9 +121,10 @@ CirMgr::randomSim()
 void
 CirMgr::fileSim(ifstream& patternFile)
 {
+    _fecGrps.clear();
     list<FECGroup> &fecGrps = _fecGrps;
     unsigned bitRead = 0;
-    size_t pattern[_I_count];
+    unsigned pattern[_I_count];
     string str;
     memset(pattern, 0, sizeof(pattern)); // init with 0
     HashMap<SimValue, FECGroup> newFecGrps(_dfsList.size());
@@ -152,8 +153,9 @@ CirMgr::fileSim(ifstream& patternFile)
             // cerr << "sim First..." << endl;
             // printFECPairs(); 
             if (bitRead == 32){ // Simulation First Time
-                // newFecGrps.insert(SimValue(0), FECGroup(_gateVarList[0]));
+                newFecGrps.insert(SimValue(0), FECGroup(_gateVarList[0]));
                 simEachGate(newFecGrps, bitRead, true, &pattern[0]);
+
                 if(_simLog) writeLog();
 
                 // Collect Valid FECGroup
@@ -161,6 +163,9 @@ CirMgr::fileSim(ifstream& patternFile)
                 for(; iter != newFecGrps.end(); ++iter){
                     if((*iter).second.size() > 1) fecGrps.push_back((*iter).second);
                 }
+
+    // printFECPairs();
+    // getchar();
             }
             else{
                 // cerr << "sim Once..." << endl;           
@@ -190,10 +195,21 @@ CirMgr::fileSim(ifstream& patternFile)
 
     // pattern not mutiple of 32
     if(bitRead % 32){
-        simEachGate(newFecGrps, bitRead, false, &pattern[0]);
+        newFecGrps.insert(SimValue(0), FECGroup(_gateVarList[0]));
+        // Noooo.... file bits not multiples of 32. 
+        // Simulate First time and Collection must be done.
+        simEachGate(newFecGrps, bitRead, true, &pattern[0]);
+        // Collect Valid FECGroup
+        HashMap<SimValue, FECGroup>::iterator itr = newFecGrps.begin();
+        for(; itr != newFecGrps.end(); ++itr){
+            if((*itr).second.size() > 1) fecGrps.push_back((*itr).second);
+        }
+
         if(_simLog) writeLog();
         // Update FECGroup
         size_t nGrps = fecGrps.size(), i = 0;
+
+        // cerr << "# group: " << nGrps << endl;
         list<FECGroup>::iterator iter = fecGrps.begin();
         for(; iter != fecGrps.end() && i < nGrps; ++i){
             FECGroup fecGrp = (*iter);
@@ -231,17 +247,21 @@ CirMgr::fileSim(ifstream& patternFile)
 /*   Private member functions about Simulation   */
 /*************************************************/
 void
-CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, const bool& firstTime, size_t* const & file)
+CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, const bool& firstTime, unsigned* const & file)
 {
     if(file){
-        for(size_t i = 0, n = 0; i < _dfsList.size() && n < _I_count; ++i){
-            if(_dfsList[i]->getType() == PI_GATE){
-                unsigned simtest = file[n];
-                // cerr << "PI " << _dfsList[i]->getGateId() << ":              " 
-                //     << bitset<32>(simtest) << endl;
-                _dfsList[i]->setSimValue(simtest);
-                ++n;
-            }
+        // for(size_t i = 0, n = 0; i < _dfsList.size() && n < _I_count; ++i){
+        //     if(_dfsList[i]->getType() == PI_GATE){
+        //         unsigned simtest = file[n];
+        //         // cerr << "PI " << _dfsList[i]->getGateId() << ":              " 
+        //         //     << bitset<32>(simtest) << endl;
+        //         _dfsList[i]->setSimValue(simtest);
+        //         ++n;
+        //     }
+        // }
+        for(size_t i = 0; i < tmpIn.size(); ++i){
+            unsigned simtest = file[i];
+            getGate(tmpIn[i] / 2)->setSimValue(simtest);
         }
     }
     for(size_t i = 0; i < _dfsList.size(); ++i){
@@ -251,7 +271,10 @@ CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, 
             _dfsList[i]->setSimValue(simtest);
             continue;
         }
-        else if(_dfsList[i]->getType() == CONST_GATE) _dfsList[i]->setSimValue(0);
+        else if(_dfsList[i]->getType() == CONST_GATE){
+            _dfsList[i]->setSimValue(0);
+            continue;
+        }
         else if(_dfsList[i]->getType() == AIG_GATE){
             CirGate* g1 = _dfsList[i]->getFanin(0), * g2 = _dfsList[i]->getFanin(1);
             unsigned v1 = g1->getSimValue(), v2 = g2->getSimValue();
@@ -279,9 +302,20 @@ CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, 
 
             if(firstTime) _dfsList[i]->setFecGrp(0);
         }
+        else if(_dfsList[i]->getType() == PO_GATE){
+            unsigned simtest = (_dfsList[i]->isInv(0)) ? 
+                            (~(_dfsList[i]->getFanin(0)->getSimValue()))
+                            : (_dfsList[i]->getFanin(0)->getSimValue());
+            _dfsList[i]->setSimValue(simtest);
+            // cout << _dfsList[i]->getGateId() << ": "
+            //     << bitset<32>(simtest) << endl;
+        }
         else continue;
 
-        if(firstTime) splitFECGroup(_dfsList[i], newFecGrps);
+        if(firstTime){
+            splitFECGroup(_dfsList[i], newFecGrps);
+            // cerr << "split first" << endl;
+        }
     }
     if(!file) bitRead += 32;
 }
@@ -289,6 +323,7 @@ CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, 
 void
 CirMgr::splitFECGroup(CirGate* gate, HashMap<SimValue, FECGroup> &newFecGrps)
 {
+    if(gate->getType() == PO_GATE) return; // important!!! skip PO
     FECGroup* fecGrp = 0;
     if(newFecGrps.query(SimValue(gate->getSimValue()), fecGrp)){
         fecGrp->add(gate, 0); // FEC
@@ -298,6 +333,7 @@ CirMgr::splitFECGroup(CirGate* gate, HashMap<SimValue, FECGroup> &newFecGrps)
     }
     else{ // Create new group
         FECGroup newFecGrp;
+        // if(newFecGrps.check(SimValue(0)))
         newFecGrp.add(gate, 0);
         newFecGrps.insert(SimValue(gate->getSimValue()), newFecGrp);
     }
@@ -306,17 +342,53 @@ CirMgr::splitFECGroup(CirGate* gate, HashMap<SimValue, FECGroup> &newFecGrps)
 void
 CirMgr::writeLog()
 {
-    size_t inputPattern[_I_count], outputPattern[_O_count];
-    for(unsigned i = 0; i < _I_count; ++i) inputPattern[i] = getGate(tmpIn[i] / 2)->getSimValue();
-    for(unsigned i = 0; i < _O_count; ++i){
-        outputPattern[i] = getGate(tmpOut[i] / 2)->getSimValue();
+    unsigned inputPattern[_I_count], outputPattern[_O_count];
+    unsigned reverse[_I_count + _O_count][32];
+    for(unsigned i = 0; i < _I_count; ++i){
+        inputPattern[i] = getGate(tmpIn[i] / 2)->getSimValue();
+        // cout << getGate(tmpIn[i] / 2)->getGateId()
+        //     << ": " << bitset<32>(getGate(tmpIn[i] / 2)->getSimValue()) << endl;
     }
+    for(unsigned i = 0; i < _O_count; ++i){
+        unsigned simtest = getGate(tmpOut[i] / 2)->getSimValue();
+        if(tmpOut[i] % 2) simtest = ~simtest;
+        outputPattern[i] = simtest;
+
+        // cout << getGate(tmpOut[i] / 2)->getGateId()
+        //     << ": " << bitset<32>(getGate(tmpOut[i] / 2)->getSimValue()) << endl;
+    }
+    // for(unsigned i = 0; i < 32; ++i){
+    //     // cout << "b" << bitset<32>(inputPattern[0]) << endl;
+    //     for(unsigned j = 0; j < _I_count; inputPattern[j++] >>= 1){
+    //         // if(j == 0) cout << "a" << bitset<32>(inputPattern[j]) << endl;
+    //         *_simLog << (inputPattern[j] & 1);
+    //         // if(j == 0) cout << "c" << bitset<32>(inputPattern[j] & 1) << endl;
+    //     }
+
+    //     *_simLog << " ";
+    //     for(unsigned j = 0; j < _O_count; outputPattern[j++] >>= 1)
+    //         *_simLog << (outputPattern[j] & (unsigned)1);
+    //     *_simLog << endl;
+    // }
     for(unsigned i = 0; i < 32; ++i){
-        for(unsigned j = 0; j < _I_count; inputPattern[j] >>=1, ++j)
-            *_simLog << (inputPattern[j] & 1);
-        *_simLog << " ";
-        for(unsigned j = 0; j < _O_count; outputPattern[j] >>=1, ++j)
-            *_simLog << (outputPattern[j] & 1);
+        for(unsigned j = 0; j < _I_count; inputPattern[j++] >>= 1)
+            reverse[j][31 - i] = (inputPattern[j] & 1);
+        for(unsigned j = 0; j < _O_count; outputPattern[j++] >>= 1)
+            reverse[j + _I_count][31 - i] = (outputPattern[j] & 1);
+    }
+    // for(unsigned i = 0; i < 32; ++i){
+    //     for(unsigned j = 0; j < _I_count + _O_count; ++j){
+    //         cout << reverse[j][i];
+    //     }
+    //     cout << endl;
+
+    // }
+    for(unsigned i = 0; i < 32; ++i){
+        for(unsigned j = 0; j < _I_count + _O_count; ++j){
+            if(j == _I_count) *_simLog << " ";
+            *_simLog << reverse[j][i];
+        }
         *_simLog << endl;
-    } 
+
+    }
 }
