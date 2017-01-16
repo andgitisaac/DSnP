@@ -241,7 +241,7 @@ CirGate::reportGate() const
     ss.str(""); // clear stringstream
 
     ss << "= Value:";
-    size_t value = _simValue;
+    unsigned value = _simValue;
     for(int n = 0; n < 32; ++n){
         if(n && (n % 4 == 0))
             ss << "_";

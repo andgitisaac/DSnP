@@ -501,8 +501,14 @@ CirMgr::printFECPairs()
     for (int i = 0; it != _fecGrps.end(); ++it, ++i){
         cout << "[" << i  << "] ";
         FECGroup::iterator iter = (*it).begin();
-        for (; iter != (*it).end(); ++iter)
-            cout << (iter.isInv() ? "!" : "") << (*iter)->getGateId() << " ";
+        bool firstIsInv = ((*it).begin().isInv());
+
+        for (; iter != (*it).end(); ++iter){
+            if(firstIsInv)
+                cout << (iter.isInv() ? "" : "!") << (*iter)->getGateId() << " ";
+            else
+                cout << (iter.isInv() ? "!" : "") << (*iter)->getGateId() << " ";
+        }
         cout << endl;
     }
 }

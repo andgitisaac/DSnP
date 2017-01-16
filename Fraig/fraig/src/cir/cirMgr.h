@@ -82,14 +82,14 @@ class SimValue
 {
 public:
     SimValue() {}
-    SimValue(size_t val = 0) : _value(val) {}
+    SimValue(unsigned val = 0) : _value(val) {}
     ~SimValue() {}
 
-    size_t operator () () const { return _value; }
+    unsigned operator () () const { return _value; }
     bool operator == (const SimValue& v) const { return (_value == v._value); }
 
 private:
-    size_t _value;
+    unsigned _value;
 };
 
 class CirMgr
@@ -146,7 +146,7 @@ private:
 
    // private function of Optimization
    void replace(CirGate*, CirGate*, bool, string&); // Done
-
+   
    // private function of Simulation
    void simEachGate(HashMap<SimValue, FECGroup>& , unsigned&, const bool& , size_t* const & = 0); // Done
    void splitFECGroup(CirGate*, HashMap<SimValue, FECGroup>&); // Done

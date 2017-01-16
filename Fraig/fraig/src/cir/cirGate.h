@@ -42,11 +42,11 @@ public:
    GateType getType() const { return _type; } // Done
    string getSymbol() const { return _symbol; } // Done
    void setSymbol(string symbol) { _symbol = symbol; } // Done
-   void setLineNo(size_t l) { cout << "#";_lineNo = l; } // Done. Use For ResetQQ
+   void setLineNo(size_t l) { _lineNo = l; } // Done. Use For ResetQQ
 
    // Simulation access methods
-   void setSimValue(size_t v) { _simValue = v; } // Done
-   size_t getSimValue() { return _simValue; } // Done
+   void setSimValue(unsigned v) { _simValue = v; } // Done
+   unsigned getSimValue() { return _simValue; } // Done
    void setFecGrp(size_t grp) { _fecGrp = grp; } // Done
    size_t getSFecGrp() { return _fecGrp; } // Done
 
@@ -85,8 +85,8 @@ private:
 
 protected:
   GateType _type;
-  unsigned _gateId, _lineNo;
-  size_t _simValue, _fecGrp;
+  unsigned _gateId, _lineNo, _simValue;
+  size_t _fecGrp;
   string _symbol;
   mutable bool _visited; // gate has been visited or not
   GateList _faninList, _fanoutList;
