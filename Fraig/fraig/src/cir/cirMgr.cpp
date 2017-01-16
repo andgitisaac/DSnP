@@ -598,7 +598,14 @@ void
 CirMgr::DFSConstruct()
 {
     _dfsList.clear();
-    for(unsigned i = _M_count + 1; i < _M_count + _O_count + 1; ++i)
+    for(unsigned i = _M_count + 1, n = 0; i < _M_count + _O_count + 1; ++i){
+        if(getGate(i)->getType() == PO_GATE){
+            unsigned AigOfPoID = getGate(i)->getFanin(0)->getGateId();
+
+            tmpOut[n] = (getGate(i)->isInv(0)) ? (2 * AigOfPoID + 1) : (2 * AigOfPoID);
+            ++n;
+        }
         getGate(i)->DFSConstruct();
+    }
     flagReset();
 }
