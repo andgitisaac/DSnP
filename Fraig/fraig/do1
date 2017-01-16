@@ -1,0 +1,4 @@
+cirr -r tests.fraig/sim09.aag
+cirsim -r
+cirp -fec
+q -f
