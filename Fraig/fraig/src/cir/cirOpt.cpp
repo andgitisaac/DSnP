@@ -109,8 +109,6 @@ CirMgr::replace(CirGate* old, CirGate* tar, bool inv, string& str)
     cout << str << tar->getGateId() << " merging "
         << (inv ? "!" : "") << old->getGateId() << "..." << endl;
 
-    cerr
-
     // Process Fanin of out
     for(size_t i = 0; i < old->_fanoutList.size(); ++i){
         CirGate* out = old->getFanout(i);
