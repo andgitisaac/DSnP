@@ -166,7 +166,7 @@ public:
       for(size_t i = 0; i < _buckets[b].size(); ++i)
          if(_buckets[b][i].first == k)
             return true;
-      return false;   
+      return false;
    }
 
    // query if k is in the hash...
