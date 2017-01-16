@@ -57,8 +57,8 @@ public:
       friend class HashMap<HashKey, HashData>;
 
    public:
-      iterator(HashMap<HashKey, HashData>* h = 0, size_t b = 0, size_t idx = 0)
-      : _hash(h), _b(b), _idx(idx) {} // Done
+      iterator(const HashMap<HashKey, HashData>* h = 0, size_t b = 0, size_t idx = 0)
+      : _hash((HashMap<HashKey, HashData>*) h), _b(b), _idx(idx) {} // Done
       iterator(const iterator& i) : _hash(i._hash), _b(i._b), _idx(i._idx) {} // Done
       ~iterator() {} // Done, Keep HashData from deleting!!!!!
 
@@ -138,11 +138,11 @@ public:
       if(_buckets == 0) return end();      
       for(size_t i = 0; i < _numBuckets; ++i)
          if(!_buckets[i].empty())
-            return iterator(const_cast<HashMap<HashKey, HashData>*>(this), i);
+            return iterator((this), i);
       return end();
    }
    // Pass the end
-   iterator end() const { return iterator(const_cast<HashMap<HashKey, HashData>*>(this), _numBuckets); } // Done
+   iterator end() const { return iterator((this), _numBuckets); } // Done
    // return true if no valid data
    bool empty() const { // Done
       // return (begin() == end());
