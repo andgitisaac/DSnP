@@ -1,4 +1,7 @@
-cirr -r tests.fraig/sim05.aag
-cirsim -r
-cirfraig
+cirr tests.fraig/sim13.aag
+usage
+cirsim -f tests.fraig/pattern.13
+usage
+cirsim -f tests.fraig/pattern.13 -o log
+usage
 q -f

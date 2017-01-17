@@ -59,7 +59,7 @@ CirMgr::sweep()
         }
     }
     flagReset();
-    strashFlag = false;
+    // strashFlag = false;
 }
 
 // Recursively simplifying from POs;
@@ -68,12 +68,12 @@ CirMgr::sweep()
 void
 CirMgr::optimize()
 {
+    string str = "Simplifying: ";
     for(size_t i = 0; i < _dfsList.size(); ++i){
         if(_dfsList[i]->getType() == AIG_GATE){            
             // CirGate* in1 = _dfsList[i]->getFanin(0), * in2 = _dfsList[i]->getFanin(1);
             vector<CirGate*> &withPhase = _dfsList[i]->_faninList;
-            CirGate* noPhase[2] = {_dfsList[i]->getFanin(0), _dfsList[i]->getFanin(1)};
-            string str = "Simplifying: ";
+            CirGate* noPhase[2] = {_dfsList[i]->getFanin(0), _dfsList[i]->getFanin(1)};            
             if(withPhase[0] == withPhase[1]) // A & A = A
                 replace(_dfsList[i], noPhase[0], (size_t)withPhase[0] & 1, str);
             else if(noPhase[0] == noPhase[1]) // A & ~A = 0, replace with Const 0.
@@ -94,7 +94,7 @@ CirMgr::optimize()
         }
     }
     DFSConstruct();
-    strashFlag = false;    
+    // strashFlag = false;    
 }
 /***************************************************/
 /*   Private member functions about optimization   */

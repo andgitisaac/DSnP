@@ -61,7 +61,7 @@ CirMgr::randomSim()
     unsigned bitRead = 0, fail = 0, maxFail = magicNum(_I_count + _A_count); // Must be size dependent.
     list<FECGroup> &fecGrps = _fecGrps;
     cout << "MAX_FAIL = " << maxFail << endl;
-
+ 
     // srand(time(NULL));
     HashMap<SimValue, FECGroup> newFecGrps(_dfsList.size());
 
@@ -379,9 +379,9 @@ CirMgr::writeLog()
     // for(unsigned i = 0; i < 32; ++i){
     for(unsigned i = 0; i < 64; ++i){
         for(unsigned j = 0; j < _I_count; inputPattern[j++] >>= 1)
-            reverse[j][31 - i] = (inputPattern[j] & 1);
+            reverse[j][63 - i] = (inputPattern[j] & 1);
         for(unsigned j = 0; j < _O_count; outputPattern[j++] >>= 1)
-            reverse[j + _I_count][31 - i] = (outputPattern[j] & 1);
+            reverse[j + _I_count][63 - i] = (outputPattern[j] & 1);
     }
     // for(unsigned i = 0; i < 32; ++i){
     for(unsigned i = 0; i < 64; ++i){

@@ -163,10 +163,10 @@ static CirGate *errGate;
 /**************************************************************/
 CirMgr::~CirMgr()
 {
-    for(unsigned i = 0; i < _gateVarList.size(); i++)
+    for(unsigned i = 0; i < _gateVarList.size(); ++i)
         delete _gateVarList[i];
     lineNo = 0;
-    strashFlag = false;
+    // strashFlag = false;
     tmpAND.clear(); tmpIn.clear(); tmpOut.clear();
 }
 
@@ -498,11 +498,18 @@ void
 CirMgr::printFECPairs()
 {
     std::list<FECGroup>::iterator it = _fecGrps.begin();
+    bool firstIsInv;
     for (int i = 0; it != _fecGrps.end(); ++it, ++i){
-        cout << "[" << i  << "] ";
+        cout << "[" << i  << "]";
         FECGroup::iterator iter = (*it).begin();
-        for (; iter != (*it).end(); ++iter)
-            cout << (iter.isInv() ? "!" : "") << (*iter)->getGateId() << " ";
+        firstIsInv = ((*it).begin().isInv());
+
+        for (; iter != (*it).end(); ++iter){
+            if(firstIsInv)
+                cout << " " << (iter.isInv() ? "" : "!") << (*iter)->getGateId();
+            else
+                cout << " " << (iter.isInv() ? "!" : "") << (*iter)->getGateId();
+        }
         cout << endl;
     }
 }
@@ -570,10 +577,8 @@ CirMgr::writeGate(ostream& outfile, CirGate *g) const
     for(unsigned i = 0; i < name->size(); ++i) outfile << (*name)[i] << endl;
     outfile << "o0 " << g->getGateId() << endl;
 
-    outfile << "c" << endl << "AAG output by Andgit Isaac Peng" << endl;
-    // i_gate->clear();
-    // name->clear();
-    // aig->clear();
+    outfile << "c" << endl << "Write gate (" << g->getGateId()
+            << ") by Andgit Isaac Peng" << endl;
     delete i_gate;
     delete name;
     delete aig;
@@ -592,7 +597,15 @@ void
 CirMgr::DFSConstruct()
 {
     _dfsList.clear();
-    for(unsigned i = _M_count + 1; i < _M_count + _O_count + 1; ++i)
+    for(unsigned i = _M_count + 1, n = 0; i < _M_count + _O_count + 1; ++i){
+        if(getGate(i)->getType() == PO_GATE){
+            // Update tmpOut....
+            unsigned AigOfPoID = getGate(i)->getFanin(0)->getGateId();
+
+            tmpOut[n] = (getGate(i)->isInv(0)) ? (2 * AigOfPoID + 1) : (2 * AigOfPoID);
+            ++n;
+        }
         getGate(i)->DFSConstruct();
+    }
     flagReset();
 }

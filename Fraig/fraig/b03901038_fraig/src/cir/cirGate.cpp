@@ -50,7 +50,7 @@ CirGate::getTypeStr() const
         default:         return "UNDEF";
     }
 }
-// I/O access functions
+// I/O access functions 
 CirGate*
 CirGate::getFanin(size_t i) const
 {
@@ -132,10 +132,16 @@ CirGate::validAig(string& str, unsigned& aig) const
 unsigned CirGate::validAig(vector<string>* i_gate, vector<string>* name, vector<string>* aig) const {
     if(_visited || _type == CONST_GATE) return _gateId;
     _visited = true;
+    string str;
     if(_type == PI_GATE){
-        if(!_symbol.empty())
-            name->push_back("i" + unsigned2Str(i_gate->size()) + " " + _symbol);
-        i_gate->push_back(unsigned2Str(2 * _gateId));
+        if(!_symbol.empty()){
+            str = "i";
+            str.append(unsigned2Str(i_gate->size()));
+            str.append(" "); str.append(_symbol);
+            name->push_back(str);
+        }
+        str = unsigned2Str(2 * _gateId);
+        i_gate->push_back(str);
         return _gateId;
     }
     else if(_type == AIG_GATE){
@@ -143,9 +149,10 @@ unsigned CirGate::validAig(vector<string>* i_gate, vector<string>* name, vector<
                 g2 = getFanin(1)->validAig(i_gate, name, aig);
         if(g2 > g1)
             g1 = g2;
-        aig->push_back(unsigned2Str(2 * _gateId) + ' ' + 
-                unsigned2Str(2 * getFanin(0)->getGateId() + isInv(0)) + ' ' + 
-                unsigned2Str(2 * getFanin(1)->getGateId() + isInv(1)));
+        str = unsigned2Str(2 * _gateId); str.append(" ");
+        str.append(unsigned2Str(2 * getFanin(0)->getGateId() + isInv(0)));  str.append(" ");
+        str.append(unsigned2Str(2 * getFanin(1)->getGateId() + isInv(1)));
+        aig->push_back(str);
         if(_gateId < g1) return g1;
         return _gateId;
     }
@@ -221,7 +228,7 @@ CirGate::reportGate() const
     cout << "==================================================" << endl;
     ss << "= " << getTypeStr() << "(" << getGateId() << ")";
     if(!getSymbol().empty()) ss << "\"" << getSymbol() << "\"";
-    if(getType() == UNDEF_GATE) ss << ", line " << getLineNo(); 
+    if(getType() == UNDEF_GATE || getType() == CONST_GATE) ss << ", line " << getLineNo(); 
     else ss << ", line " << getLineNo()+1; 
     str = ss.str();
     cout << setw(49) << left << str << "=" << endl;
@@ -240,8 +247,8 @@ CirGate::reportGate() const
     cout << setw(49) << left << str << "=" << endl;
     ss.str(""); // clear stringstream
 
-    ss << "= Value:";
-    size_t value = _simValue;
+    ss << "= Value: ";
+    unsigned value = _simValue;
     for(int n = 0; n < 32; ++n){
         if(n && (n % 4 == 0))
             ss << "_";
