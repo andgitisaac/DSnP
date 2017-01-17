@@ -78,6 +78,7 @@ CirMgr::randomSim()
     if(_simLog) writeLog();
 
     while(fail < maxFail){
+        cout << "Total # of FEC Groups: " << fecGrps.size() << flush << char(13);
         simEachGate(newFecGrps, bitRead, false);
         if(_simLog) writeLog();
         // Update FECGroup
@@ -101,7 +102,7 @@ CirMgr::randomSim()
 
         if(fecGrps.size() == nGrps) ++fail;
     }
-    cout << "Total # of FEC Groups:" << fecGrps.size() << endl;
+    // cout << "Total # of FEC Groups:" << fecGrps.size() << flush << char(13);
 
     // FECGroup sorting    
     for(list<FECGroup>::iterator iter = fecGrps.begin(); iter != fecGrps.end(); ++iter){
@@ -230,8 +231,9 @@ CirMgr::fileSim(ifstream& patternFile)
                 if((*iter).second.size() > 1) fecGrps.push_back((*iter).second);
             }
         }
+        // cout << "Total # of FEC Groups:" << fecGrps.size() << flush << char(13);
     }
-    cout << "Total # of FEC Groups:" << fecGrps.size() << endl;
+    cout << "Total # of FEC Groups:" << fecGrps.size() << flush << char(13);
 
     // FECGroup sorting    
     for(list<FECGroup>::iterator iter = fecGrps.begin(); iter != fecGrps.end(); ++iter){
@@ -254,6 +256,7 @@ void
 // CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, const bool& firstTime, unsigned* const & file)
 CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, const bool& firstTime, size_t* const & file)
 {
+    size_t simtest;
     if(file){
         // for(size_t i = 0, n = 0; i < _dfsList.size() && n < _I_count; ++i){
         //     if(_dfsList[i]->getType() == PI_GATE){
@@ -264,9 +267,10 @@ CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, 
         //         ++n;
         //     }
         // }
+        
         for(size_t i = 0; i < tmpIn.size(); ++i){
             // unsigned simtest = file[i];
-            size_t simtest = file[i];
+            simtest = file[i];
             getGate(tmpIn[i] / 2)->setSimValue(simtest);
         }
     }
@@ -274,7 +278,7 @@ CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, 
         if((!file) && _dfsList[i]->getType() == PI_GATE){
             // assign or generate value to input
             // unsigned simtest = (unsigned)((rnGen(INT_MAX) << 16) | rnGen(INT_MAX));
-            size_t simtest = (size_t)((rnGen(INT_MAX) << 16) | rnGen(INT_MAX));
+            simtest = (size_t)((rnGen(INT_MAX) << 16) | rnGen(INT_MAX));
             _dfsList[i]->setSimValue(simtest);
             continue;
         }
@@ -314,9 +318,9 @@ CirMgr::simEachGate(HashMap<SimValue, FECGroup> &newFecGrps, unsigned& bitRead, 
             // unsigned simtest = (_dfsList[i]->isInv(0)) ? 
             //                 (~(_dfsList[i]->getFanin(0)->getSimValue()))
             //                 : (_dfsList[i]->getFanin(0)->getSimValue());
-            size_t simtest = (_dfsList[i]->isInv(0)) ? 
-                            (~(_dfsList[i]->getFanin(0)->getSimValue()))
-                            : (_dfsList[i]->getFanin(0)->getSimValue());
+            simtest = (_dfsList[i]->isInv(0)) ? 
+                        (~(_dfsList[i]->getFanin(0)->getSimValue()))
+                        : (_dfsList[i]->getFanin(0)->getSimValue());
             _dfsList[i]->setSimValue(simtest);
             // cout << _dfsList[i]->getGateId() << ": "
             //     << bitset<32>(simtest) << endl;
@@ -357,6 +361,7 @@ CirMgr::writeLog()
     // unsigned reverse[_I_count + _O_count][32];
     size_t inputPattern[_I_count], outputPattern[_O_count];
     size_t reverse[_I_count + _O_count][64];
+    size_t simtest;
     for(unsigned i = 0; i < _I_count; ++i){
         inputPattern[i] = getGate(tmpIn[i] / 2)->getSimValue();
         // cout << getGate(tmpIn[i] / 2)->getGateId()
@@ -364,7 +369,7 @@ CirMgr::writeLog()
     }
     for(unsigned i = 0; i < _O_count; ++i){
         // unsigned simtest = getGate(tmpOut[i] / 2)->getSimValue();
-        size_t simtest = getGate(tmpOut[i] / 2)->getSimValue();
+        simtest = getGate(tmpOut[i] / 2)->getSimValue();
         if(tmpOut[i] % 2) simtest = ~simtest;
         outputPattern[i] = simtest;
 

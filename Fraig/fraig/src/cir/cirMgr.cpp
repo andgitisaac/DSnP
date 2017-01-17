@@ -498,10 +498,11 @@ void
 CirMgr::printFECPairs()
 {
     std::list<FECGroup>::iterator it = _fecGrps.begin();
+    bool firstIsInv;
     for (int i = 0; it != _fecGrps.end(); ++it, ++i){
         cout << "[" << i  << "]";
         FECGroup::iterator iter = (*it).begin();
-        bool firstIsInv = ((*it).begin().isInv());
+        firstIsInv = ((*it).begin().isInv());
 
         for (; iter != (*it).end(); ++iter){
             if(firstIsInv)

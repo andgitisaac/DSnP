@@ -78,7 +78,7 @@ CirMgr::fraig()
 {
     SatSolver solver;    
     bool result;
-    int cnt = 0; // max pattern collect to simulate once
+    // int cnt = 0; // max pattern collect to simulate once
     string str = "Fraig: ";
 
     solver.initialize();
@@ -103,13 +103,14 @@ CirMgr::fraig()
         FECGroup &fecGrp = (*its);
         FECGroup::iterator i = fecGrp.begin();
         if((*fecGrp.begin())->getType() == CONST_GATE){
-            for(++i; i != fecGrp.end(); ++i){
+            ++i;
+            for(; i != fecGrp.end(); ++i){
                 result = solve((*fecGrp.begin())->getVar(), fecGrp.begin().isInv(),
-                   (*i)->getVar(), !i.isInv(), solver);
+                   (*i)->getVar(), i.isInv(), solver);
                 solveMSG((*fecGrp.begin()), fecGrp.begin().isInv(), 
                     (*i), i.isInv()); // print solve message
                 if(!result){
-                    replace(*i, *fecGrp.begin(), i.isInv(), str);
+                    replace(*i, (*fecGrp.begin()), i.isInv(), str);
                     _gateVarList[(*i)->getGateId()] = 0;
                     delete (*i);
                     --_A_count;
@@ -118,7 +119,7 @@ CirMgr::fraig()
             }
         }
         else{
-            for(; i != fecGrp.end(); ++i){
+            while(i != fecGrp.end()){
                 FECGroup::iterator cur = i;
                 ++cur;
                 while(cur != fecGrp.end()){
@@ -135,6 +136,8 @@ CirMgr::fraig()
                     }
                     else SATSplit(cur, fecGrp, solver);
                 }
+                ++i;
+                // cout << (i != fecGrp.end()) << endl;
             }
         }
     }
@@ -159,10 +162,6 @@ void CirMgr::createCNF(SatSolver& solver)
             }
             else _dfsList[i]->setVar(var); // Should not enter here...                
         }
-        // else if(_dfsList[i]->getType() == CONST_GATE){ // How to deal with CONST 0???
-        //     _dfsList[i]->setVar(var);
-        //     solver.assertProperty(var, false);
-        // }
         else if(_dfsList[i]->getType() == AIG_GATE){
             _dfsList[i]->setVar(var);
             CirGate* g1 = _dfsList[i]->getFanin(0), * g2 = _dfsList[i]->getFanin(1);
