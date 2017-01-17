@@ -163,7 +163,7 @@ static CirGate *errGate;
 /**************************************************************/
 CirMgr::~CirMgr()
 {
-    for(unsigned i = 0; i < _gateVarList.size(); i++)
+    for(unsigned i = 0; i < _gateVarList.size(); ++i)
         delete _gateVarList[i];
     lineNo = 0;
     strashFlag = false;
@@ -576,10 +576,8 @@ CirMgr::writeGate(ostream& outfile, CirGate *g) const
     for(unsigned i = 0; i < name->size(); ++i) outfile << (*name)[i] << endl;
     outfile << "o0 " << g->getGateId() << endl;
 
-    outfile << "c" << endl << "AAG output by Andgit Isaac Peng" << endl;
-    // i_gate->clear();
-    // name->clear();
-    // aig->clear();
+    outfile << "c" << endl << "Write gate (" << g->getGateId()
+            << ") by Andgit Isaac Peng" << endl;
     delete i_gate;
     delete name;
     delete aig;
@@ -600,6 +598,7 @@ CirMgr::DFSConstruct()
     _dfsList.clear();
     for(unsigned i = _M_count + 1, n = 0; i < _M_count + _O_count + 1; ++i){
         if(getGate(i)->getType() == PO_GATE){
+            // Update tmpOut....
             unsigned AigOfPoID = getGate(i)->getFanin(0)->getGateId();
 
             tmpOut[n] = (getGate(i)->isInv(0)) ? (2 * AigOfPoID + 1) : (2 * AigOfPoID);

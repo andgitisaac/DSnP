@@ -41,10 +41,10 @@ CirMgr::strash()
 {
     // Bug: merging floating gate still exist by floating reportQQ
     // Update: fix it!!(_gateVarList[] = 0 and delete _dfsList[])
-    cout << "Before: ";
-    for(size_t i = 0; i < tmpOut.size(); ++i)
-        cout << tmpOut[i] << " ";
-    cout << endl;
+    // cout << "Before: ";
+    // for(size_t i = 0; i < tmpOut.size(); ++i)
+    //     cout << tmpOut[i] << " ";
+    // cout << endl;
 
     if(strashFlag){
         cout << "Error: strash operation has already been performed!!" << endl;
@@ -67,15 +67,20 @@ CirMgr::strash()
         }
     }
     DFSConstruct();
-    cout << "After : ";
-    for(size_t i = 0; i < tmpOut.size(); ++i)
-        cout << tmpOut[i] << " ";
-    cout << endl;
+    // cout << "After : ";
+    // for(size_t i = 0; i < tmpOut.size(); ++i)
+    //     cout << tmpOut[i] << " ";
+    // cout << endl;
 }
 
 void
 CirMgr::fraig()
 {
+    
+
+
+
+    
 }
 
 /********************************************/

@@ -59,7 +59,8 @@ public:
         bool operator != (const iterator& i) const { return !(*this == i); }
 
     private:
-        vector<CirGate*>::iterator _it;
+        vector<CirGate*>::iterator _it; 
+        // Since it's a vector, maybe not overload its iterator...
     };
 
     iterator begin() { return iterator(_gateList.begin()); }
@@ -117,12 +118,12 @@ public:
 
    // Member functions about fraig
    void strash(); // Done
-   void printFEC() const;
+   void printFEC() const; // Where??
    void fraig();
 
    // Member functions about circuit reporting
    void printSummary() const; // Done
-   void printNetlist() const; // Done. With tmpOut Bug!!!!!!!!
+   void printNetlist() const; // Done. With tmpOut Bug!!!!!!!! Fix!!!!
    void printPIs() const; // Done
    void printPOs() const; // Done
    void printFloatGates() const; // Done
