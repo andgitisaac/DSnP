@@ -1,4 +1,5 @@
-cirr -r tests.fraig/strash05.aag
-cirstrash
-cirw
+cirr -r tests.fraig/sim13.aag
+cirsim -r
+cirp -fec
+usage
 q -f
