@@ -30,7 +30,7 @@ class CirGate
 
 public:
    CirGate(GateType type, unsigned gateId = 0, unsigned lineNo = 0):
-    _type(type), _gateId(gateId), _lineNo(lineNo), _simValue(0), _fecGrp(0), _visited(false) {}
+    _type(type), _gateId(gateId), _lineNo(lineNo), _simValue(0), _fecGrp(0), _visited(false), _var(0) {}
    virtual ~CirGate() { _faninList.clear(); _fanoutList.clear(); _gateId = 0, _lineNo = 0;}
 
    #define NEG 0x1 // Use for an inverting I/O
@@ -45,10 +45,16 @@ public:
    void setLineNo(size_t l) { _lineNo = l; } // Done. Use For ResetQQ
 
    // Simulation access methods
-   void setSimValue(unsigned v) { _simValue = v; } // Done
-   unsigned getSimValue() { return _simValue; } // Done
+   // void setSimValue(unsigned v) { _simValue = v; } // Done
+   // unsigned getSimValue() { return _simValue; } // Done
+   void setSimValue(size_t v) { _simValue = v; } // Done
+   size_t getSimValue() { return _simValue; } // Done
    void setFecGrp(size_t grp) { _fecGrp = grp; } // Done
-   size_t getSFecGrp() { return _fecGrp; } // Done
+   size_t getSFecGrp() const { return _fecGrp; } // Done
+
+   // Fraig access methods
+   void setVar(Var& v) { _var = v; } // Done
+   Var& getVar() { return _var; } // Done
 
    // Boolin functions
    virtual bool isAig() const { return _type == AIG_GATE; } // Done   
@@ -85,11 +91,14 @@ private:
 
 protected:
   GateType _type;
-  unsigned _gateId, _lineNo, _simValue;
+  unsigned _gateId, _lineNo;
+  // unsigned _simValue;  
+  size_t _simValue;
   size_t _fecGrp;
   string _symbol;
   mutable bool _visited; // gate has been visited or not
   GateList _faninList, _fanoutList;
+  Var _var;
 };
 
 class ConstGate : public CirGate

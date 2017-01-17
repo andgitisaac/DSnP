@@ -59,7 +59,7 @@ CirMgr::sweep()
         }
     }
     flagReset();
-    strashFlag = false;
+    // strashFlag = false;
 }
 
 // Recursively simplifying from POs;
@@ -94,7 +94,7 @@ CirMgr::optimize()
         }
     }
     DFSConstruct();
-    strashFlag = false;    
+    // strashFlag = false;    
 }
 /***************************************************/
 /*   Private member functions about optimization   */

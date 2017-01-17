@@ -166,7 +166,7 @@ CirMgr::~CirMgr()
     for(unsigned i = 0; i < _gateVarList.size(); ++i)
         delete _gateVarList[i];
     lineNo = 0;
-    strashFlag = false;
+    // strashFlag = false;
     tmpAND.clear(); tmpIn.clear(); tmpOut.clear();
 }
 
